@@ -36,7 +36,7 @@ class BackWPup_Create_Archive {
 	 * @var PclZip
 	 */
 	private $pclzip = NULL;
-	
+
 	/**
 	 * class handel for PclZip.
 	 *
@@ -66,62 +66,68 @@ class BackWPup_Create_Archive {
 	 */
 	public function __construct( $file ) {
 
-
 		//check param
-		if ( empty( $file ) )
+		if ( empty( $file ) ) {
 			throw new BackWPup_Create_Archive_Exception(  __( 'The file name of an archive cannot be empty.', 'backwpup' ) );
+		}
 
 		//set file
 		$this->file = trim( $file );
 
 		//check folder can used
-		if ( ! is_dir( dirname( $this->file ) ) ||! is_writable( dirname( $this->file ) ) )
+		if ( ! is_dir( dirname( $this->file ) ) ||! is_writable( dirname( $this->file ) ) ) {
 			throw new BackWPup_Create_Archive_Exception( sprintf( _x( 'Folder %s for archive not found','%s = Folder name', 'backwpup' ), dirname( $this->file ) ) );
-
+		}
 
 		//set and check method and get open handle
 		if ( strtolower( substr( $this->file, -7 ) ) == '.tar.gz' ) {
-			if ( ! function_exists( 'gzencode' ) )
+			if ( ! function_exists( 'gzencode' ) ) {
 				throw new BackWPup_Create_Archive_Exception( __( 'Functions for gz compression not available', 'backwpup' ) );
+			}
 			$this->method = 'TarGz';
-			$this->filehandel = fopen( 'compress.zlib://'. $this->file, 'ab');
+			$this->filehandel = fopen( $this->file, 'ab' );
 		}
 		elseif ( strtolower( substr( $this->file, -8 ) ) == '.tar.bz2' ) {
-			if ( ! function_exists( 'bzcompress' ) )
+			if ( ! function_exists( 'bzcompress' ) ) {
 				throw new BackWPup_Create_Archive_Exception( __( 'Functions for bz2 compression not available', 'backwpup' ) );
+			}
 			$this->method = 'TarBz2';
-			$this->filehandel = fopen( $this->file, 'ab');			
+			$this->filehandel = fopen( $this->file, 'ab' );
 		}
 		elseif ( strtolower( substr( $this->file, -4 ) ) == '.tar' ) {
 			$this->method = 'Tar';
 			$this->filehandel = fopen( $this->file, 'ab');
 		}
 		elseif ( strtolower( substr( $this->file, -4 ) ) == '.zip' ) {
-			$this->method = BackWPup_Option::get( 'cfg', 'jobziparchivemethod');
+			$this->method = get_site_option( 'backwpup_cfg_jobziparchivemethod');
 			//check and set method
-			if ( empty( $this->method ) || ( $this->method != 'ZipArchive' && $this->method != 'PclZip' ) )
+			if ( empty( $this->method ) || ( $this->method != 'ZipArchive' && $this->method != 'PclZip' ) ) {
 				$this->method = 'ZipArchive';
-			if ( ! class_exists( 'ZipArchive' ) ) 
+			}
+			if ( ! class_exists( 'ZipArchive' ) ) {
 				$this->method = 'PclZip';
+			}
 			//open classes
 			if ( $this->get_method() == 'ZipArchive' ) {
 				$this->ziparchive = new ZipArchive();
 				$ziparchive_open = $this->ziparchive->open( $this->file, ZipArchive::CREATE );
 				if ( $ziparchive_open !== TRUE ) {
-					$this->ziparchive_status( $ziparchive_open );
+					$this->ziparchive_status();
 					throw new BackWPup_Create_Archive_Exception( sprintf( _x( 'Cannot create zip archive: %d','ZipArchive open() result', 'backwpup' ), $ziparchive_open ) );
 				}
 			}
-			if ( $this->get_method() == 'PclZip' && ! function_exists( 'gzencode' ) )
+			if ( $this->get_method() == 'PclZip' && ! function_exists( 'gzencode' ) ) {
 				throw new BackWPup_Create_Archive_Exception( __( 'Functions for gz compression not available', 'backwpup' ) );
+			}
 			if( $this->get_method() == 'PclZip' ) {
 				$this->method = 'PclZip';
 				if ( ini_get( 'mbstring.func_overload' ) && function_exists( 'mb_internal_encoding' ) ) {
 					$this->previous_encoding = mb_internal_encoding();
 					mb_internal_encoding( 'ISO-8859-1' );
 				}
-				if ( ! defined('PCLZIP_TEMPORARY_DIR') )
+				if ( ! defined('PCLZIP_TEMPORARY_DIR') ) {
 					define( 'PCLZIP_TEMPORARY_DIR', BackWPup::get_plugin_data( 'TEMP' ) );
+				}
 				require_once ABSPATH . 'wp-admin/includes/class-pclzip.php';
 				$this->pclzip = new PclZip( $this->file );
 			}
@@ -133,8 +139,9 @@ class BackWPup_Create_Archive {
 			$this->filehandel = fopen( 'compress.zlib://' . $this->file, 'wb');
 		}
 		elseif ( strtolower( substr( $this->file, -4 ) ) == '.bz2' ) {
-			if ( ! function_exists( 'bzcompress' ) )
+			if ( ! function_exists( 'bzcompress' ) ) {
 				throw new BackWPup_Create_Archive_Exception( __( 'Functions for bz2 compression not available', 'backwpup' ) );
+			}
 			$this->method = 'bz2';
 			$this->filehandel = fopen( 'compress.bzip2://' . $this->file, 'w');
 		}
@@ -143,8 +150,9 @@ class BackWPup_Create_Archive {
 		}
 
 		//check file handle
-		if ( ! empty( $this->filehandel ) && ! is_resource( $this->filehandel ) )
+		if ( ! empty( $this->filehandel ) && ! is_resource( $this->filehandel ) ) {
 			throw new BackWPup_Create_Archive_Exception( __( 'Cannot open archive file', 'backwpup' ) );
+		}
 
 	}
 
@@ -155,42 +163,56 @@ class BackWPup_Create_Archive {
 	public function __destruct() {
 
 		//set encoding back
-		if ( ! empty( $this->previous_encoding ) )
+		if ( ! empty( $this->previous_encoding ) ) {
 			mb_internal_encoding( $this->previous_encoding );
+		}
 
 		//close PclZip Class
 		if ( is_object( $this->pclzip ) ) {
 			if ( count( $this->pclzip_file_list ) > 0 ) {
-				if ( 0 == $this->pclzip->add( $this->pclzip_file_list ) )
+				if ( 0 == $this->pclzip->add( $this->pclzip_file_list ) ) {
 					trigger_error( sprintf( __( 'PclZip archive add error: %s', 'backwpup' ), $this->pclzip->errorInfo( TRUE ) ), E_USER_ERROR );
+				}
 			}
 			unset( $this->pclzip );
 		}
 
-		//close PclZip Class
+		//close ZipArchive Class
 		if ( is_object( $this->ziparchive ) ) {
-			$this->ziparchive_status( $this->ziparchive->status );
-			$this->ziparchive->close();
-			unset( $this->ziparchive );
+			if ( ! $this->ziparchive->close() ) {
+				sleep( 1 );
+				if ( ! $this->ziparchive->close() ) {
+					sleep( 1 );
+					if ( ! $this->ziparchive->close() ) {
+						trigger_error( __( 'ZIP archive cannot be closed correctly.', 'backwpup' ), E_USER_ERROR );
+					}
+				}
+			}
+			$this->ziparchive = NULL;
 		}
 
 		//close file if open
-		if ( is_resource( $this->filehandel ) )
+		if ( is_resource( $this->filehandel ) ) {
 			fclose( $this->filehandel );
+		}
 	}
-	
+
 	/*
 	 * Closing the archive
 	 */
 	public function close() {
-		
+
 		//write tar file end
-		if ( $this->get_method() == 'Tar' || $this->get_method() == 'TarGz' ) {
-			fwrite( $this->filehandel, pack( "a1024", "" ) );
-		} elseif ( $this->get_method() == 'TarBz2' ) {
-			fwrite( $this->filehandel, bzcompress( pack( "a1024", "" ) ) );
+		if ( in_array( $this->get_method(), array( 'Tar', 'TarGz', 'TarBz2' ) ) ) {
+			$footer = pack( "a1024", "" );
+			if ( $this->method == 'TarGz' ) {
+				$footer = gzencode( $footer );
+			}
+			if ( $this->method == 'TarBz2' ) {
+				$footer = bzcompress( $footer );
+			}
+			fwrite( $this->filehandel, $footer );
 		}
-		
 	}
 
 	/**
@@ -210,25 +232,31 @@ class BackWPup_Create_Archive {
 	 * @param $file_name       string
 	 * @param $name_in_archive string
 	 * @return bool Add worked or not
-	 * @throws BackWPup_Create_Archive_Exception
 	 */
 	public function add_file( $file_name, $name_in_archive = '' ) {
 
 		$file_name = trim( $file_name );
-		
+
 	    //check param
 		if ( empty( $file_name ) ) {
 			trigger_error( __( 'File name cannot be empty', 'backwpup' ), E_USER_WARNING );
 			return FALSE;
 		}
 
-		if ( ! is_file( $file_name ) || ! is_readable( $file_name ) ) {
-			trigger_error( sprintf( _x( 'File %s does not exist or is not readable', 'File path to add to archive', 'backwpup' ), $file_name ), E_USER_WARNING );
-			return FALSE;
+		if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
+			clearstatcache( TRUE, $file_name );
+		}
+
+		if ( ! is_readable( $file_name ) ) {
+			trigger_error( sprintf( _x( 'File %s does not exist or is not readable', 'File to add to archive', 'backwpup' ), $file_name ), E_USER_WARNING );
+			return TRUE;
 		}
 
 		if ( empty( $name_in_archive ) )
 			$name_in_archive = $file_name;
+
+		//remove reserved chars
+		$name_in_archive = str_replace( array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", chr(0)) , '', $name_in_archive );
 
 		switch ( $this->get_method() ) {
 			case 'gz':
@@ -241,9 +269,11 @@ class BackWPup_Create_Archive {
 					trigger_error( sprintf( __( 'Cannot open source file %s to archive', 'backwpup' ), $file_name ), E_USER_WARNING );
 					return FALSE;
 				}
-				while ( ! feof( $fd ) )
+				while ( ! feof( $fd ) ) {
 					fwrite( $this->filehandel, fread( $fd, 8192 ) );
+				}
 				fclose( $fd );
+				$this->file_count++;
 				break;
 			case 'bz':
 				if ( $this->file_count > 0 ) {
@@ -255,31 +285,70 @@ class BackWPup_Create_Archive {
 					trigger_error( sprintf( __( 'Cannot open source file %s to archive', 'backwpup' ), $file_name ), E_USER_WARNING );
 					return FALSE;
 				}
-				while ( ! feof( $fd ) )
+				while ( ! feof( $fd ) ) {
 					fwrite( $this->filehandel, bzcompress( fread( $fd, 8192 ) ) );
+				}
 				fclose( $fd );
+				$this->file_count++;
 				break;
 			case 'Tar':
 			case 'TarGz':
 			case 'TarBz2':
-				if ( ! $this->tar_file( $file_name, $name_in_archive ) );
-					return FALSE;
+				return $this->tar_file( $file_name, $name_in_archive );
 				break;
 			case 'ZipArchive':
+				$file_size = abs( (int) filesize( $file_name ) );
+				//check if entry already in archive and delete it if it not in full size
+				if ( $zip_file_stat = $this->ziparchive->statName( $name_in_archive ) ) {
+					if ( $zip_file_stat[ 'size' ] != $file_size ) {
+						$this->ziparchive->deleteName( $name_in_archive );
+						//reopen on deletion
+						$this->file_count = 21;
+					} else {
+						//file already complete in archive
+						return TRUE;
+					}
+				}
 				//close and reopen, all added files are open on fs
-				if ( $this->file_count >= 20 ) { //35 works with PHP 5.2.4 on win
-					$this->ziparchive_status( $this->ziparchive->status );
-					$this->ziparchive->close();
+				if ( $this->file_count > 20 ) { //35 works with PHP 5.2.4 on win
+					if ( ! $this->ziparchive->close() ) {
+						sleep( 1 );
+						if ( ! $this->ziparchive->close() ) {
+							sleep( 1 );
+							if ( ! $this->ziparchive->close() ) {
+								trigger_error(__( 'ZipArchive can not closed correctly', 'backwpup'	), E_USER_ERROR	);
+							}
+						}
+					}
+					$this->ziparchive = NULL;
+					if ( ! $this->check_archive_filesize() ) {
+						return FALSE;
+					}
+					$this->ziparchive = new ZipArchive();
 					$ziparchive_open = $this->ziparchive->open( $this->file, ZipArchive::CREATE );
 					if ( $ziparchive_open !== TRUE ) {
-						$this->ziparchive_status( $ziparchive_open );
+						$this->ziparchive_status();
 						return FALSE;
 					}
 					$this->file_count = 0;
 				}
-				if ( ! $this->ziparchive->addFile( $file_name, $name_in_archive ) ) {
-					trigger_error( sprintf( __( 'Cannot add "%s" to zip archive!', 'backwpup' ), $name_in_archive ), E_USER_ERROR );
-					return FALSE;
+				if ( $file_size < ( 1024 * 1024 * 2 ) ) {
+					if ( ! $this->ziparchive->addFromString( $name_in_archive, file_get_contents( $file_name ) ) ) {
+						$this->ziparchive_status();
+						trigger_error( sprintf( __( 'Cannot add "%s" to zip archive!', 'backwpup' ), $name_in_archive ), E_USER_ERROR );
+						return FALSE;
+					} else {
+						$file_factor = round( $file_size / ( 1024 * 1024 ), 4 ) * 2;
+						$this->file_count = $this->file_count + $file_factor;
+					}
+				} else {
+					if ( ! $this->ziparchive->addFile( $file_name, $name_in_archive ) ) {
+						$this->ziparchive_status();
+						trigger_error( sprintf( __( 'Cannot add "%s" to zip archive!', 'backwpup' ), $name_in_archive ), E_USER_ERROR );
+						return FALSE;
+					} else {
+						$this->file_count++;
+					}
 				}
 				break;
 			case 'PclZip':
@@ -293,8 +362,6 @@ class BackWPup_Create_Archive {
 				}
 				break;
 		}
-
-		$this->file_count++;
 
 		return TRUE;
 	}
@@ -310,7 +377,7 @@ class BackWPup_Create_Archive {
 	public function add_empty_folder( $folder_name, $name_in_archive = '' ) {
 
 		$folder_name = trim( $folder_name );
-		
+
 		//check param
 		if ( empty( $folder_name ) ) {
 			trigger_error( __( 'Folder name cannot be empty', 'backwpup' ), E_USER_WARNING );
@@ -319,19 +386,23 @@ class BackWPup_Create_Archive {
 
 		if ( ! is_dir( $folder_name ) || ! is_readable( $folder_name ) ) {
 			trigger_error( sprintf( _x( 'Folder %s does not exist or is not readable', 'Folder path to add to archive', 'backwpup' ), $folder_name ), E_USER_WARNING );
+			return TRUE;
+		}
+
+		if ( empty( $name_in_archive ) ) {
 			return FALSE;
 		}
 
-		if ( empty( $name_in_archive ) )
-			return FALSE;
+		//remove reserved chars
+		$name_in_archive = str_replace( array("?", "[", "]", "\\", "=", "<", ">", ":", ";", ",", "'", "\"", "&", "$", "#", "*", "(", ")", "|", "~", "`", "!", "{", "}", chr(0)) , '', $name_in_archive );
 
 		switch ( $this->get_method() ) {
 			case 'gz':
-				trigger_error( __( 'This archive method can only add one file', 'backwpup' ), E_USER_WARNING );
+				trigger_error( __( 'This archive method can only add one file', 'backwpup' ), E_USER_ERROR );
 				return FALSE;
 				break;
 			case 'bz':
-				trigger_error( __( 'This archive method can only add one file', 'backwpup' ), E_USER_WARNING );
+				trigger_error( __( 'This archive method can only add one file', 'backwpup' ), E_USER_ERROR );
 				return FALSE;
 				break;
 			case 'Tar':
@@ -342,7 +413,7 @@ class BackWPup_Create_Archive {
 				break;
 			case 'ZipArchive':
 				if ( ! $this->ziparchive->addEmptyDir( $name_in_archive ) ) {
-					trigger_error( sprintf( __( 'Cannot add "%s" to zip archive!', 'backwpup' ), $name_in_archive ), E_USER_ERROR );
+					trigger_error( sprintf( __( 'Cannot add "%s" to zip archive!', 'backwpup' ), $name_in_archive ), E_USER_WARNING );
 					return FALSE;
 				}
 				break;
@@ -357,45 +428,14 @@ class BackWPup_Create_Archive {
 	/**
 	 * Output status of ZipArchive
 	 *
-	 * @param $code int ZipArchive Error code
 	 * @return bool
 	 */
-	private function ziparchive_status( $code ) {
+	private function ziparchive_status() {
 
-		if ( $code == 0 )
+		if ( $this->ziparchive->status == 0 )
 			return TRUE;
 
-		//define error messages
-		$zip_errors[ ZipArchive::ER_MULTIDISK ] =  __( '(ER_MULTIDISK) Multi-disk zip archives not supported', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_RENAME ] =  __( '(ER_RENAME) Renaming temporary file failed', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_CLOSE ] =  __( '(ER_CLOSE) Closing zip archive failed', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_SEEK ] =  __( '(ER_SEEK) Seek error', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_READ ] = __( '(ER_READ) Read error', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_WRITE ] = __( '(ER_WRITE) Write error', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_CRC ] = __( '(ER_CRC) CRC error', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_ZIPCLOSED ] = __( '(ER_ZIPCLOSED) Containing zip archive was closed', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_NOENT ] = __( '(ER_NOENT) No such file', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_EXISTS ] = __( '(ER_EXISTS) File already exists', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_OPEN ] = __( '(ER_OPEN) Can\'t open file', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_TMPOPEN ] = __( '(ER_TMPOPEN) Failure to create temporary file', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_ZLIB ] = __( '(ER_ZLIB) Zlib error', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_MEMORY ] = __( '(ER_MEMORY) Malloc failure', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_MULTIDISK ] = __( '(ER_CHANGED) Entry has been changed', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_CHANGED ] = __( '(ER_COMPNOTSUPP) Compression method not supported', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_EOF ] = __( '(ER_EOF) Premature EOF', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_INVAL ] = __( '(ER_INVAL) Invalid argument', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_NOZIP ] = __( '(ER_NOZIP) Not a zip archive', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_INTERNAL ] = __( '(ER_INTERNAL) Internal error', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_INCONS ] = __( '(ER_INCONS) Zip archive inconsistent', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_REMOVE ] = __( '(ER_REMOVE) Can\'t remove file', 'backwpup' );
-		$zip_errors[ ZipArchive::ER_DELETED ] = __( '(ER_DELETED) Entry has been deleted', 'backwpup' );
-
-		//ste error message
-		$zip_error = $code;
-		if ( isset( $zip_errors[ $zip_error ] ) )
-			$zip_error = $zip_errors[ $zip_error ];
-
-		trigger_error( sprintf( _x( 'ZipArchive returns status: %s','Text of ZipArchive status Message', 'backwpup' ), $zip_error ), E_USER_ERROR );
+		trigger_error( sprintf( _x( 'ZipArchive returns status: %s','Text of ZipArchive status Message', 'backwpup' ), $this->ziparchive->getStatusString() ), E_USER_ERROR );
 		return FALSE;
 	}
 
@@ -403,6 +443,12 @@ class BackWPup_Create_Archive {
 	 * Tar a file to archive
 	 */
 	private function tar_file( $file_name, $name_in_archive ) {
+
+		if ( ! $this->check_archive_filesize( $file_name ) ) {
+			return FALSE;
+		}
+
+		$chunk_size = 1024 * 1024 * 4;
 
 		//split filename larger than 100 chars
 		if ( strlen( $name_in_archive ) <= 100 ) {
@@ -412,19 +458,31 @@ class BackWPup_Create_Archive {
 		else {
 			$filename_offset = strlen( $name_in_archive ) - 100;
 			$split_pos       = strpos( $name_in_archive, '/', $filename_offset );
+			if ( $split_pos === FALSE ) {
+				$split_pos = strrpos( $name_in_archive, '/' );
+			}
 			$filename        = substr( $name_in_archive, $split_pos + 1 );
 			$filename_prefix = substr( $name_in_archive, 0, $split_pos );
-			if ( strlen( $filename ) > 100 )
-				trigger_error( sprintf( __( 'File name "%1$s" too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
-			if ( strlen( $filename_prefix ) > 155 )
-				trigger_error( sprintf( __( 'File path "%1$s" too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
+			if ( strlen( $filename ) > 100 ) {
+				$filename = substr( $filename, -100 );
+				trigger_error( sprintf( __( 'File name "%1$s" is too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
+			}
+			if ( strlen( $filename_prefix ) > 155 ) {
+				trigger_error( sprintf( __( 'File path "%1$s" is too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
+			}
 		}
 		//get file stat
-		$file_stat = @stat( $file_name );
+		$file_stat = stat( $file_name );
+		if ( ! $file_stat ) {
+			return TRUE;
+		}
+		$file_stat[ 'size' ] = abs( (int) $file_stat[ 'size' ] );
 		//open file
-		if ( ! ( $fd = fopen( $file_name, 'rb' ) ) ) {
-			trigger_error( sprintf( __( 'Cannot open source file %s to archive', 'backwpup' ), $file_name ), E_USER_WARNING );
-			return FALSE;
+		if ( $file_stat[ 'size' ] > 0 ) {
+			if ( ! ( $fd = fopen( $file_name, 'rb' ) ) ) {
+				trigger_error( sprintf( __( 'Cannot open source file %s for archiving', 'backwpup' ), $file_name ), E_USER_WARNING );
+				return TRUE;
+			}
 		}
 		//Set file user/group name if linux
 		$fileowner = __( "Unknown", "backwpup" );
@@ -436,7 +494,7 @@ class BackWPup_Create_Archive {
 			$filegroup = $info[ 'name' ];
 		}
 		// Generate the TAR header for this file
-		$header = pack( "a100a8a8a8a12a12a8a1a100a6a2a32a32a8a8a155a12",
+		$chunk = pack( "a100a8a8a8a12a12a8a1a100a6a2a32a32a8a8a155a12",
 			$filename, //name of file  100
 			sprintf( "%07o", $file_stat[ 'mode' ] ), //file mode  8
 			sprintf( "%07o", $file_stat[ 'uid' ] ), //owner user ID  8
@@ -457,30 +515,40 @@ class BackWPup_Create_Archive {
 
 		// Computes the unsigned Checksum of a file's header
 		$checksum = 0;
-		for ( $i = 0; $i < 512; $i ++ )
-			$checksum += ord( substr( $header, $i, 1 ) );
+		for ( $i = 0; $i < 512; $i ++ ) {
+			$checksum += ord( substr( $chunk, $i, 1 ) );
+		}
 
 		$checksum = pack( "a8", sprintf( "%07o", $checksum ) );
-		$header   = substr_replace( $header, $checksum, 148, 8 );
-		//write header
-		if ( $this->get_method() == 'TarBz2' ) {
-			fwrite( $this->filehandel, bzcompress( $header ) );
-		} else {
-			fwrite( $this->filehandel, $header );		
-		}
-		
-		// read/write files in 512 bite Blocks
-		while ( ! feof( $fd ) ) {
-			$file_data = fread( $fd, 512 );
-			if ( strlen( $file_data ) > 0 ) {
-				if ( $this->get_method() == 'TarBz2' ) {
-					fwrite( $this->filehandel, bzcompress( pack( "a512", $file_data ) ) );
-				} else {
-					fwrite( $this->filehandel, pack( "a512", $file_data ) );		
-				}		
+		$chunk    = substr_replace( $chunk, $checksum, 148, 8 );
+
+		if ( isset( $fd ) && is_resource( $fd ) ) {
+			// read/write files in 512 bite Blocks
+			while ( ( $content = fread( $fd, 512 ) ) != '' ) {
+				$chunk .= pack( "a512", $content );
+				if ( strlen( $chunk ) >= $chunk_size ) {
+					if ( $this->method == 'TarGz' ) {
+						$chunk = gzencode( $chunk );
+					}
+					if ( $this->method == 'TarBz2' ) {
+						$chunk = bzcompress( $chunk );
+					}
+					fwrite( $this->filehandel, $chunk );
+					$chunk = '';
+				}
 			}
+			fclose( $fd );
 		}
-		fclose( $fd );
+
+		if ( ! empty( $chunk ) ) {
+			if ( $this->method == 'TarGz' ) {
+				$chunk = gzencode( $chunk );
+			}
+			if ( $this->method == 'TarBz2' ) {
+				$chunk = bzcompress( $chunk );
+			}
+			fwrite( $this->filehandel, $chunk );
+		}
 
 		return TRUE;
 	}
@@ -501,12 +569,18 @@ class BackWPup_Create_Archive {
 		else {
 			$filename_offset = strlen( $name_in_archive ) - 100;
 			$split_pos       = strpos( $name_in_archive, '/', $filename_offset );
+			if ( $split_pos === FALSE ) {
+				$split_pos = strrpos( untrailingslashit( $name_in_archive ), '/' );
+			}
 			$tar_filename        = substr( $name_in_archive, $split_pos + 1 );
 			$tar_filename_prefix = substr( $name_in_archive, 0, $split_pos );
-			if ( strlen( $tar_filename ) > 100 )
-				trigger_error( sprintf( __( 'Folder name "%1$s" too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
-			if ( strlen( $tar_filename_prefix ) > 155 )
-				trigger_error( sprintf( __( 'Folder path "%1$s" too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
+			if ( strlen( $tar_filename ) > 100 ) {
+				$tar_filename = substr( $tar_filename, - 100 );
+				trigger_error( sprintf( __( 'Folder name "%1$s" is too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
+			}
+			if ( strlen( $tar_filename_prefix ) > 155 ) {
+				trigger_error( sprintf( __( 'Folder path "%1$s" is too long to be saved correctly in %2$s archive!', 'backwpup' ), $name_in_archive, $this->get_method() ), E_USER_WARNING );
+			}
 		}
 		//get file stat
 		$file_stat = @stat( $folder_name );
@@ -541,20 +615,56 @@ class BackWPup_Create_Archive {
 
 		// Computes the unsigned Checksum of a file's header
 		$checksum = 0;
-		for ( $i = 0; $i < 512; $i ++ )
+		for ( $i = 0; $i < 512; $i ++ ) {
 			$checksum += ord( substr( $header, $i, 1 ) );
+		}
 
 		$checksum = pack( "a8", sprintf( "%07o", $checksum ) );
 		$header   = substr_replace( $header, $checksum, 148, 8 );
 		//write header
-		if ( $this->get_method() == 'TarBz2' ) {
-			fwrite( $this->filehandel, bzcompress( $header ) );
+		if ( $this->method == 'TarGz' ) {
+			$header = gzencode( $header );
+		}
+		if ( $this->method == 'TarBz2' ) {
+			$header = bzcompress( $header );
+		}
+		fwrite( $this->filehandel, $header );
+
+		return TRUE;
+	}
+
+	/**
+	 * @param string $file_to_add
+	 *
+	 * @return bool
+	 */
+	private function check_archive_filesize( $file_to_add = '' ) {
+
+		$two_gb_in_bytes = 2147483647;
+
+		if ( ! empty( $file_to_add ) ) {
+			$file_to_add_size = abs( (int) filesize( $file_to_add ) );
 		} else {
-			fwrite( $this->filehandel, $header );		
+			$file_to_add_size = 0;
+		}
+
+		if ( is_resource( $this->filehandel ) ) {
+			$stats = fstat( $this->filehandel );
+			$archive_size = $stats[ 'size' ];
+		} else {
+			$archive_size = filesize( $this->file );
+		}
+
+		$archive_size = $archive_size + $file_to_add_size;
+		if ( $archive_size > $two_gb_in_bytes ) {
+			trigger_error(	sprintf( __( 'If %s will be added to your backup archive, the archive will be too large for many file systems (over 2GB). You might want to consider splitting the backup job in multiple jobs with less files each.', 'backwpup' ), $file_to_add ), E_USER_ERROR );
+
+			return FALSE;
 		}
 
 		return TRUE;
 	}
+
 }
 
 /**

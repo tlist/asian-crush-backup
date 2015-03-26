@@ -5,26 +5,16 @@
 class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 
 	/**
-	 * @return mixed
+	 * @var $backwpup_job_object BackWPup_Job
 	 */
-	public function __construct() {
-
-		$this->info[ 'ID' ]        	 = 'DROPBOX';
-		$this->info[ 'name' ]        = __( 'Dropbox', 'backwpup' );
-		$this->info[ 'description' ] = __( 'Backup to Dropbox', 'backwpup' );
-		$this->info[ 'URI' ]         = translate( BackWPup::get_plugin_data( 'PluginURI' ), 'backwpup' );
-		$this->info[ 'author' ]      = BackWPup::get_plugin_data( 'Author' );
-		$this->info[ 'authorURI' ]   = translate( BackWPup::get_plugin_data( 'AuthorURI' ), 'backwpup' );
-		$this->info[ 'version' ]     = BackWPup::get_plugin_data( 'Version' );
-
-	}
+	public static $backwpup_job_object = NULL;
 
 	/**
 	 * @return array
 	 */
 	public function option_defaults() {
 
-		return array( 'dropboxtoken' => '', 'dropboxsecret' => '', 'dropboxroot' => 'sandbox', 'dropboxmaxbackups' => 15, 'dropboxsyncnodelete' => TRUE, 'dropboxdir' => trailingslashit( sanitize_file_name( get_bloginfo( 'name' ) ) ) );
+		return array( 'dropboxtoken' => array(), 'dropboxroot' => 'sandbox', 'dropboxmaxbackups' => 15, 'dropboxsyncnodelete' => TRUE, 'dropboxdir' => trailingslashit( sanitize_file_name( get_bloginfo( 'name' ) ) ) );
 	}
 
 
@@ -32,48 +22,69 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 	 * @param $jobid
 	 */
 	public function edit_tab( $jobid ) {
-		
-		//Dropbox auth keys from Dropbox
-		// if cancelled auth
-		if ( ! empty( $_GET[ 'not_approved' ] ) ) {
-			echo '<div id="message" class="error"><p>' .__( 'Dropbox authentication not approved', 'backwpup' ) . '</p></div>';
-			delete_site_transient( 'backwpup_dropbox_auth_' . $jobid );
-		}
-		// if Auth data exists
-		$auth_data = get_site_transient( 'backwpup_dropbox_auth_' . $jobid );
-		if ( $auth_data ) {
-			$oAuthStuff = array();
+
+		if ( ! empty( $_GET[ 'deleteauth' ] ) && $_GET[ 'deleteauth' ] == 1 ) {
+			//disable token on dropbox
 			try {
-				$dropbox    = new BackWPup_Destination_Dropbox_API( $auth_data[ 'type' ] );
-				$oAuthStuff = $dropbox->oAuthAccessToken( $auth_data[ 'oauth_token' ], $auth_data[ 'oauth_token_secret' ] );
-				if ( ! empty( $oAuthStuff ) ) {
-					echo '<div id="message" class="updated"><p>' .  __( 'Dropbox authentication complete!', 'backwpup' ) . '</p></div>';
-					BackWPup_Option::update( $jobid, 'dropboxtoken', $oAuthStuff[ 'oauth_token' ] );
-					BackWPup_Option::update( $jobid, 'dropboxsecret', BackWPup_Encryption::encrypt( $oAuthStuff[ 'oauth_token_secret' ] ) );
-					BackWPup_Option::update( $jobid, 'dropboxroot', $auth_data[ 'type' ] );
-					delete_site_transient( 'backwpup_dropbox_auth_' . $jobid );
-				}
+				$dropbox = new BackWPup_Destination_Dropbox_API( BackWPup_Option::get( $jobid, 'dropboxroot' ) );
+				if ( BackWPup_Option::get( $jobid, 'dropboxsecret' ) )
+					$dropbox->setOAuthTokens( array( 'access_token' => BackWPup_Option::get( $jobid, 'dropboxtoken' ), 'oauth_token_secret' => BackWPup_Encryption::decrypt( BackWPup_Option::get( $jobid, 'dropboxsecret' ) ) ) );
+				else
+					$dropbox->setOAuthTokens( BackWPup_Option::get( $jobid, 'dropboxtoken' ) );
+				$dropbox->disable_access_token();
 			} catch ( Exception $e ) {
-				echo '<div  id="message" class="error"><p>' . sprintf( __( 'Dropbox API: %s', 'backwpup' ), $e->getMessage() ) . '</p></div>';
-				delete_site_transient( 'backwpup_dropbox_auth_' . $jobid );
+				echo '<div id="message" class="error"><p>' . sprintf( __( 'Dropbox API: %s', 'backwpup' ), $e->getMessage() ) . '</p></div>';
 			}
+			BackWPup_Option::update( $jobid, 'dropboxtoken', array() );
+			BackWPup_Option::update( $jobid, 'dropboxroot', 'sandbox' );
+			BackWPup_Option::delete( $jobid, 'dropboxsecret' );
 		}
+
+		$dropbox    = new BackWPup_Destination_Dropbox_API( 'dropbox' );
+		$dropbox_auth_url = $dropbox->oAuthAuthorize();
+		$dropbox    = new BackWPup_Destination_Dropbox_API( 'sandbox' );
+		$sandbox_auth_url = $dropbox->oAuthAuthorize();
+
+		$dropboxtoken = BackWPup_Option::get( $jobid, 'dropboxtoken' );
 		?>
 
     <h3 class="title"><?php _e( 'Login', 'backwpup' ); ?></h3>
     <p></p>
     <table class="form-table">
         <tr>
-            <th scope="row"><?php _e( 'Authenticate', 'backwpup' ); ?></th>
-            <td><?php if ( ! BackWPup_Option::get( $jobid, 'dropboxtoken' ) && ! BackWPup_Option::get( $jobid, 'dropboxsecret' ) && ! isset( $oAuthStuff[ 'oauth_token' ] ) ) { ?>
-               		<span style="color:red;"><?php _e( 'Not authenticated!', 'backwpup' ); ?></span>&nbsp;<a href="http://db.tt/8irM1vQ0"><?php _e( 'Create Account', 'backwpup' ); ?></a><br />
+            <th scope="row"><?php _e( 'Authentication', 'backwpup' ); ?></th>
+            <td><?php if ( empty( $dropboxtoken[ 'access_token' ] ) ) { ?>
+               		<span style="color:red;"><?php _e( 'Not authenticated!', 'backwpup' ); ?></span><br />&nbsp;<br />
+					<a class="button secondary" href="http://db.tt/8irM1vQ0"><?php _e( 'Create Account', 'backwpup' ); ?></a>
 				<?php } else { ?>
-                	<span style="color:green;"><?php _e( 'Authenticated!', 'backwpup' ); ?></span><br />
+                	<span style="color:green;"><?php _e( 'Authenticated!', 'backwpup' ); ?></span><br />&nbsp;<br />
+					<a class="button secondary" href="<?php echo network_admin_url( 'admin.php' ) . '?page=backwpupeditjob&deleteauth=1&jobid=' . $jobid .'&tab=dest-dropbox&_wpnonce=' . wp_create_nonce( 'edit-job' ); ?>" title="<?php _e( 'Delete Dropbox Authentication', 'backwpup' ); ?>"><?php _e( 'Delete Dropbox Authentication', 'backwpup' ); ?></a>
 				<?php } ?>
-				<a class="button secondary" href="<?php echo admin_url( 'admin-ajax.php', 'relative' );?>?action=backwpup_dest_dropbox&type=sandbox&jobid=<?php echo $jobid ?>"><?php _e( 'Reauthenticate (Sandbox)', 'backwpup' ); ?></a>&nbsp;
-    			<a class="button secondary" href="<?php echo admin_url( 'admin-ajax.php', 'relative' );?>?action=backwpup_dest_dropbox&type=dropbox&jobid=<?php echo $jobid ?>"><?php _e( 'Reauthenticate (full Dropbox)', 'backwpup' ); ?></a>			
             </td>
         </tr>
+
+		<?php if ( empty( $dropboxtoken[ 'access_token' ] ) ) { ?>
+		<tr>
+			<th scope="row"><label for="id_sandbox_code"><?php _e( 'App Access to Dropbox', 'backwpup' ); ?></label></th>
+			<td>
+				<input id="id_sandbox_code" name="sandbox_code" type="text" value="" class="regular-text code help-tip" title="<?php esc_attr_e( 'A dedicated folder named BackWPup will be created inside of the Apps folder in your Dropbox. BackWPup will get read and write access to that folder only. You can specify a subfolder as your backup destination for this job in the destination field below.', 'backwpup' ); ?>" />&nbsp;
+				<a class="button secondary" href="<?php echo $sandbox_auth_url;?>" target="_blank"><?php _e( 'Get Dropbox App auth code', 'backwpup' ); ?></a>
+				<p><em><?php _e( 'Allows restricted access to Apps/BackWPup folder only.', 'backwpup' ); ?></em></p>
+			</td>
+		</tr>
+		<tr>
+			<th></th>
+			<td><?php _e( '— OR —', 'backwpup' ); ?></td>
+		</tr>
+		<tr>
+			<th scope="row"><label for="id_dropbbox_code"><?php _e( 'Full Access to Dropbox', 'backwpup' ); ?></label></th>
+			<td>
+				<input id="id_dropbbox_code" name="dropbbox_code" type="text" value="" class="regular-text code help-tip"  title="<?php _e( 'BackWPup will have full read and write access to your entire Dropbox. You can specify your backup destination wherever you want, just be aware that ANY files or folders inside of your Dropbox can be overridden or deleted by BackWPup.', 'backwpup' ); ?>" />&nbsp;
+				<a class="button secondary" href="<?php echo $dropbox_auth_url;?>" target="_blank"><?php _e( 'Get full Dropbox auth code ', 'backwpup' ); ?></a>
+				<p><em><?php _e( 'Allows full access to your entire Dropbox.', 'backwpup' ); ?></em></p>
+			</td>
+		</tr>
+		<?php } ?>
     </table>
 
 
@@ -81,9 +92,10 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
     <p></p>
     <table class="form-table">
         <tr>
-            <th scope="row"><label for="iddropboxdir"><?php _e( 'Folder in Dropbox', 'backwpup' ); ?></label></th>
+            <th scope="row"><label for="iddropboxdir"><?php _e( 'Destination Folder', 'backwpup' ); ?></label></th>
             <td>
-                <input id="iddropboxdir" name="dropboxdir" type="text" value="<?php echo esc_attr( BackWPup_Option::get( $jobid, 'dropboxdir' ) ); ?>" class="regular-text" />
+                <input id="iddropboxdir" name="dropboxdir" type="text" value="<?php echo esc_attr( BackWPup_Option::get( $jobid, 'dropboxdir' ) ); ?>" class="regular-text help-tip" title="<?php esc_attr_e( 'Specify a subfolder where your backup archives will be stored. If you use the App option from above, this folder will be created inside of Apps/BackWPup. Otherwise it will be created at the root of your Dropbox. Already exisiting folders with the same name will not be overriden.', 'backwpup' ); ?>" />
+                <p><em><?php _e( 'Folder inside your Dropbox where your backup archives will be stored.', 'theme_hamburg_textdomain' );?></em></p>
             </td>
         </tr>
         <tr>
@@ -92,8 +104,8 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 				<?php
 				if ( BackWPup_Option::get( $jobid, 'backuptype' ) == 'archive' ) {
 					?>
-                    <label for="iddropboxmaxbackups"><input id="iddropboxmaxbackups" name="dropboxmaxbackups" type="text" size="3" value="<?php echo esc_attr( BackWPup_Option::get( $jobid, 'dropboxmaxbackups' ) );?>" class="small-text" />&nbsp;
-					<?php  _e( 'Number of files to keep in folder.', 'backwpup' ); BackWPup_Help::tip( __( 'Oldest files will be deleted first. 0 = no deletion', 'backwpup' ) ); ?></label>
+                    <label for="iddropboxmaxbackups"><input id="iddropboxmaxbackups" name="dropboxmaxbackups" title="<?php esc_attr_e( 'Older files will be deleted first. 0 = no files will be deleted.', 'backwpup' ); ?>" type="text" size="3" value="<?php echo esc_attr( BackWPup_Option::get( $jobid, 'dropboxmaxbackups' ) );?>" class="small-text help-tip" />&nbsp;
+					<em><?php  _e( 'Number of files to keep in folder.', 'backwpup' ); ?></em></label>
 					<?php } else { ?>
                     <label for="iddropboxsyncnodelete" ><input class="checkbox" value="1"
                            type="checkbox" <?php checked( BackWPup_Option::get( $jobid, 'dropboxsyncnodelete' ), TRUE ); ?>
@@ -107,59 +119,33 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 	}
 
 	/**
-	 * Authentication over ajax
-	 */
-	public function edit_ajax() {
-		
-		$_GET[ 'jobid' ] = (int) $_GET[ 'jobid' ];
-		
-		// dropbox auth
-		if ( $_GET[ 'type' ] == 'dropbox' ) {
-			try {
-				$dropbox = new BackWPup_Destination_Dropbox_API( 'dropbox' );
-				// let the user authorize (user will be redirected)
-				$response = $dropbox->oAuthAuthorize( network_admin_url( 'admin.php' ) . '?page=backwpupeditjob&jobid=' .$_GET[ 'jobid' ] .'&tab=dest-dropbox&_wpnonce=' . wp_create_nonce( 'edit-job' ) );
-				// save oauth_token_secret
-				$auth_data = array(
-									 'oauth_token'        => $response[ 'oauth_token' ],
-									 'oauth_token_secret' => $response[ 'oauth_token_secret' ],
-									 'type'				  => 'dropbox'
-									);
-				set_site_transient( 'backwpup_dropbox_auth_' . $_GET[ 'jobid' ], $auth_data, 3600 );
-				wp_redirect( $response[ 'authurl' ] );
-
-			}
-			catch ( Exception $e ) {
-				echo '<div  id="message" class="error"><p>' . sprintf( __( 'Dropbox API: %s', 'backwpup' ), $e->getMessage() ) . '</p></div>';
-			}		
-		} 
-		// sandbox auth
-		elseif ( $_GET[ 'type' ] == 'sandbox' ) {			
-			try {
-				$dropbox = new BackWPup_Destination_Dropbox_API( 'sandbox' );
-				// let the user authorize (user will be redirected)
-				$response = $dropbox->oAuthAuthorize( network_admin_url( 'admin.php' ) . '?page=backwpupeditjob&jobid=' .$_GET[ 'jobid' ] .'&tab=dest-dropbox&_wpnonce=' . wp_create_nonce( 'edit-job' ) );
-				// save oauth_token_secret
-				$auth_data = array(
-									 'oauth_token'        => $response[ 'oauth_token' ],
-									 'oauth_token_secret' => $response[ 'oauth_token_secret' ],
-									 'type'				  => 'sandbox'
-									);
-				set_site_transient(  'backwpup_dropbox_auth_' . $_GET[ 'jobid' ], $auth_data, 3600 );
-				wp_redirect( $response[ 'authurl' ] );
-			}
-			catch ( Exception $e ) {
-				echo '<div  id="message" class="error"><p>' . sprintf( __( 'Dropbox API: %s', 'backwpup' ), $e->getMessage() ) . '</p></div>';
-			}
-		}
-	}
-
-
-	/**
 	 * @param $jobid
 	 * @return string|void
 	 */
 	public function edit_form_post_save( $jobid ) {
+
+		// get auth
+		if ( ! empty( $_POST[ 'sandbox_code' ] ) ) {
+			try {
+				$dropbox = new BackWPup_Destination_Dropbox_API( 'sandbox' );
+				$dropboxtoken = $dropbox->oAuthToken( $_POST[ 'sandbox_code' ] );
+				BackWPup_Option::update( $jobid, 'dropboxtoken', $dropboxtoken );
+				BackWPup_Option::update( $jobid, 'dropboxroot', 'sandbox' );
+			} catch ( Exception $e ) {
+				BackWPup_Admin::message( 'DROPBOX: ' . $e->getMessage(), TRUE );
+			}
+		}
+
+		if ( ! empty( $_POST[ 'dropbbox_code' ] ) ) {
+			try {
+				$dropbox = new BackWPup_Destination_Dropbox_API( 'dropbox' );
+				$dropboxtoken = $dropbox->oAuthToken( $_POST[ 'dropbbox_code' ] );
+				BackWPup_Option::update( $jobid, 'dropboxtoken', $dropboxtoken );
+				BackWPup_Option::update( $jobid, 'dropboxroot', 'dropbox' );
+			} catch ( Exception $e ) {
+				BackWPup_Admin::message( 'DROPBOX: ' . $e->getMessage(), TRUE );
+			}
+		}
 
 		BackWPup_Option::update( $jobid, 'dropboxsyncnodelete', ( isset( $_POST[ 'dropboxsyncnodelete' ] ) && $_POST[ 'dropboxsyncnodelete' ] == 1 ) ? TRUE : FALSE );
 		BackWPup_Option::update( $jobid, 'dropboxmaxbackups', isset( $_POST[ 'dropboxmaxbackups' ] ) ? (int)$_POST[ 'dropboxmaxbackups' ] : 0 );
@@ -185,7 +171,7 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 		if ( BackWPup_Option::get( $jobid, 'dropboxtoken' ) && BackWPup_Option::get( $jobid, 'dropboxsecret' ) ) {
 			try {
 				$dropbox = new BackWPup_Destination_Dropbox_API( BackWPup_Option::get( $jobid, 'dropboxroot' ) );
-				$dropbox->setOAuthTokens( BackWPup_Option::get( $jobid, 'dropboxtoken' ), BackWPup_Encryption::decrypt( BackWPup_Option::get( $jobid, 'dropboxsecret' ) ) );
+				$dropbox->setOAuthTokens( BackWPup_Option::get( $jobid, 'dropboxtoken' ) );
 				$dropbox->fileopsDelete( $backupfile );
 				//update file list
 				foreach ( $files as $key => $file ) {
@@ -195,7 +181,7 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 				unset( $dropbox );
 			}
 			catch ( Exception $e ) {
-				BackWPup_Admin::message( 'DROPBOX: ' . $e->getMessage()  );
+				BackWPup_Admin::message( 'DROPBOX: ' . $e->getMessage(), TRUE );
 			}
 		}
 		set_site_transient( 'backwpup_' . strtolower( $jobdest ), $files, 60 * 60 * 24 * 7 );
@@ -209,7 +195,7 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 
 		try {
 			$dropbox = new BackWPup_Destination_Dropbox_API( BackWPup_Option::get( $jobid, 'dropboxroot' ) );
-			$dropbox->setOAuthTokens( BackWPup_Option::get( $jobid, 'dropboxtoken' ), BackWPup_Encryption::decrypt( BackWPup_Option::get( $jobid, 'dropboxsecret' ) ) );
+			$dropbox->setOAuthTokens( BackWPup_Option::get( $jobid, 'dropboxtoken' ) );
 			$media = $dropbox->media( $get_file );
 			if ( ! empty( $media[ 'url' ] ) )
 				header( "Location: " . $media[ 'url' ] );
@@ -232,54 +218,65 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 	 * @param $job_object
 	 * @return bool
 	 */
-	public function job_run_archive( $job_object ) {
+	public function job_run_archive( &$job_object ) {
 
 		$job_object->substeps_todo = 2 + $job_object->backup_filesize;
-		$job_object->log( sprintf( __( '%d. Try to send backup file to Dropbox&#160;&hellip;', 'backwpup' ), $job_object->steps_data[ $job_object->step_working ][ 'STEP_TRY' ] ), E_USER_NOTICE );
+		if ( $job_object->steps_data[ $job_object->step_working ]['SAVE_STEP_TRY'] != $job_object->steps_data[ $job_object->step_working ][ 'STEP_TRY' ] )
+			$job_object->log( sprintf( __( '%d. Try to send backup file to Dropbox&#160;&hellip;', 'backwpup' ), $job_object->steps_data[ $job_object->step_working ][ 'STEP_TRY' ] ), E_USER_NOTICE );
+
 		try {
 			$dropbox = new BackWPup_Destination_Dropbox_API( $job_object->job[ 'dropboxroot' ] );
+			// cahnge oauth1 to oauth2 token
+			if ( ! empty( $job_object->job[ 'dropboxsecret' ] ) && empty( $job_object->job[ 'dropboxtoken' ][ 'access_token' ] ) ) {
+				$dropbox->setOAuthTokens( array( 'access_token' => $job_object->job[ 'dropboxtoken' ], 'oauth_token_secret' => BackWPup_Encryption::decrypt( $job_object->job[ 'dropboxsecret' ] ) ) );
+				$job_object->job[ 'dropboxtoken' ] = $dropbox->token_from_oauth1();
+				BackWPup_Option::update( $job_object->job[ 'jobid' ], 'dropboxtoken', $job_object->job[ 'dropboxtoken' ] );
+				BackWPup_Option::delete( $job_object->job[ 'jobid' ], 'dropboxsecret' );
+			}
 			// set the tokens
-			$dropbox->setOAuthTokens( $job_object->job[ 'dropboxtoken' ], BackWPup_Encryption::decrypt( $job_object->job[ 'dropboxsecret' ] ) );
+			$dropbox->setOAuthTokens( $job_object->job[ 'dropboxtoken' ] );
+
 			//get account info
-			$info = $dropbox->accountInfo();
-			if ( ! empty( $info[ 'uid' ] ) ) {
-				$job_object->log( sprintf( __( 'Authenticated with Dropbox of user %s', 'backwpup' ), $info[ 'display_name' ] . ' (' . $info[ 'email' ] . ')' ), E_USER_NOTICE );
+			if ( $job_object->steps_data[ $job_object->step_working ]['SAVE_STEP_TRY'] != $job_object->steps_data[ $job_object->step_working ][ 'STEP_TRY' ] ) {
+				$info = $dropbox->accountInfo();
+				if ( ! empty( $info[ 'uid' ] ) ) {
+					$job_object->log( sprintf( __( 'Authenticated with Dropbox of user %s', 'backwpup' ), $info[ 'display_name' ] . ' (' . $info[ 'email' ] . ')' ), E_USER_NOTICE );
+					//Quota
+					$dropboxfreespase = $info[ 'quota_info' ][ 'quota' ] - $info[ 'quota_info' ][ 'shared' ] - $info[ 'quota_info' ][ 'normal' ];
+					$job_object->log( sprintf( __( '%s available on your Dropbox', 'backwpup' ), size_format( $dropboxfreespase, 2 ) ), E_USER_NOTICE );
+				} else {
+					$job_object->log( __( 'Not Authenticated with Dropbox!', 'backwpup' ), E_USER_ERROR );
+					return FALSE;
+				}
+				$job_object->log( __( 'Uploading to Dropbox&#160;&hellip;', 'backwpup' ), E_USER_NOTICE );
 			}
-			//Check Quota
-			$dropboxfreespase = $info[ 'quota_info' ][ 'quota' ] - $info[ 'quota_info' ][ 'shared' ] - $info[ 'quota_info' ][ 'normal' ];
-			if ( $job_object->backup_filesize > $dropboxfreespase ) {
-				$job_object->log( __( 'Your Dropbox appears to be full.', 'backwpup' ), E_USER_ERROR );
 
-				return TRUE;
-			}
-			else {
-				$job_object->log( sprintf( __( '%s available on your Dropbox', 'backwpup' ), size_format( $dropboxfreespase, 2 ) ), E_USER_NOTICE );
-			}
-			$job_object->substeps_done = 0;
 			// put the file
-			$job_object->log( __( 'Uploading to Dropbox&#160;&hellip;', 'backwpup' ), E_USER_NOTICE );
-			$response = $dropbox->upload( $job_object->backup_folder . $job_object->backup_file, $job_object->job[ 'dropboxdir' ] . $job_object->backup_file );
-			if ( $response[ 'bytes' ] == $job_object->backup_filesize ) {
-				if ( ! empty( $job_object->job[ 'jobid' ] ) )
-					BackWPup_Option::update(  $job_object->job[ 'jobid' ], 'lastbackupdownloadurl', network_admin_url( 'admin.php' ) . '?page=backwpupbackups&action=downloaddropbox&file=' . ltrim( $response[ 'path' ], '/' ) . '&jobid=' . $job_object->job[ 'jobid' ] );
-				$job_object->substeps_done = 1 + $job_object->backup_filesize;
-				$job_object->log( sprintf( __( 'Backup transferred to %s', 'backwpup' ), 'https://api-content.dropbox.com/1/files/' . $job_object->job[ 'dropboxroot' ] . $response[ 'path' ] ), E_USER_NOTICE );
-			}
-			else {
-				if ( $response[ 'bytes' ] != $job_object->backup_filesize )
-					$job_object->log( __( 'Uploaded file size and local file size don\'t match.', 'backwpup' ), E_USER_ERROR );
-				else
-					$job_object->log( sprintf( __( 'Error on transfer backup to Dropbox: %s', 'backwpup' ), $response[ 'error' ] ), E_USER_ERROR );
+			self::$backwpup_job_object = &$job_object;
 
-				return FALSE;
-			}
-		}
-		catch ( Exception $e ) {
-			$job_object->log( E_USER_ERROR, sprintf( __( 'Dropbox API: %s', 'backwpup' ), htmlentities( $e->getMessage() ) ), $e->getFile(), $e->getLine() );
+			if ( $job_object->substeps_done < $job_object->backup_filesize ) { //only if upload not complete
+				$response = $dropbox->upload( $job_object->backup_folder . $job_object->backup_file, $job_object->job[ 'dropboxdir' ] . $job_object->backup_file );
+				if ( $response[ 'bytes' ] == $job_object->backup_filesize ) {
+					if ( ! empty( $job_object->job[ 'jobid' ] ) )
+						BackWPup_Option::update(  $job_object->job[ 'jobid' ], 'lastbackupdownloadurl', network_admin_url( 'admin.php' ) . '?page=backwpupbackups&action=downloaddropbox&file=' . ltrim( $response[ 'path' ], '/' ) . '&jobid=' . $job_object->job[ 'jobid' ] );
+					$job_object->substeps_done = 1 + $job_object->backup_filesize;
+					$job_object->log( sprintf( __( 'Backup transferred to %s', 'backwpup' ), 'https://api-content.dropbox.com/1/files/' . $job_object->job[ 'dropboxroot' ] . $response[ 'path' ] ), E_USER_NOTICE );
+				}
+				else {
+					if ( $response[ 'bytes' ] != $job_object->backup_filesize )
+						$job_object->log( __( 'Uploaded file size and local file size don\'t match.', 'backwpup' ), E_USER_ERROR );
+					else
+						$job_object->log(
+										sprintf(
+											__( 'Error transfering backup to %s.', 'backwpup' ) . ' ' . $response[ 'error' ],
+											__( 'Dropbox', 'backwpup' )
+										), E_USER_ERROR	);
 
-			return FALSE;
-		}
-		try {
+					return FALSE;
+				}
+			}
+
+
 			$backupfilelist = array();
 			$filecounter    = 0;
 			$files          = array();
@@ -288,8 +285,9 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 				foreach ( $metadata[ 'contents' ] as $data ) {
 					if ( $data[ 'is_dir' ] != TRUE ) {
 						$file = basename( $data[ 'path' ] );
-						if ( $job_object->is_backup_archive( $file ) )
+						if ( $job_object->is_backup_archive( $file ) ) {
 							$backupfilelist[ strtotime( $data[ 'modified' ] ) ] = $file;
+						}
 						$files[ $filecounter ][ 'folder' ]      = "https://api-content.dropbox.com/1/files/" . $job_object->job[ 'dropboxroot' ]  . dirname( $data[ 'path' ] ) . "/";
 						$files[ $filecounter ][ 'file' ]        = $data[ 'path' ];
 						$files[ $filecounter ][ 'filename' ]    = basename( $data[ 'path' ] );
@@ -341,9 +339,6 @@ class BackWPup_Destination_Dropbox extends BackWPup_Destinations {
 	public function can_run( $job_object ) {
 
 		if ( empty( $job_object->job[ 'dropboxtoken' ] ) )
-			return FALSE;
-
-		if ( empty( $job_object->job[ 'dropboxsecret' ] ) )
 			return FALSE;
 
 		return TRUE;
@@ -400,10 +395,6 @@ final class BackWPup_Destination_Dropbox_API {
 	 */
 	private $oauth_token = '';
 
-	/**
-	 * @var string
-	 */
-	private $oauth_token_secret = '';
 
 
 	/**
@@ -413,32 +404,37 @@ final class BackWPup_Destination_Dropbox_API {
 	public function __construct( $boxtype = 'dropbox' ) {
 
 		if ( $boxtype == 'dropbox' ) {
-			$this->oauth_app_key 	= BackWPup_Option::get( 'cfg', 'dropboxappkey' );
-			$this->oauth_app_secret = BackWPup_Encryption::decrypt( BackWPup_Option::get( 'cfg', 'dropboxappsecret' ) );
+			$this->oauth_app_key 	= get_site_option( 'backwpup_cfg_dropboxappkey', base64_decode( "dHZkcjk1MnRhZnM1NmZ2" ) );
+			$this->oauth_app_secret = BackWPup_Encryption::decrypt( get_site_option( 'backwpup_cfg_dropboxappsecret', base64_decode( "OWV2bDR5MHJvZ2RlYmx1" ) ) );
 			$this->root             = 'dropbox';
 		}
 		else {
-			$this->oauth_app_key 	= BackWPup_Option::get( 'cfg', 'dropboxsandboxappkey' );
-			$this->oauth_app_secret = BackWPup_Encryption::decrypt( BackWPup_Option::get( 'cfg', 'dropboxsandboxappsecret' ) );
+			$this->oauth_app_key 	= get_site_option( 'backwpup_cfg_dropboxsandboxappkey', base64_decode( "cHVrZmp1a3JoZHR5OTFk" ) );
+			$this->oauth_app_secret = BackWPup_Encryption::decrypt( get_site_option( 'backwpup_cfg_dropboxsandboxappsecret', base64_decode( "eGNoYzhxdTk5eHE0eWdq" ) ) );
 			$this->root             = 'sandbox';
 		}
 
-		if ( empty( $this->oauth_app_key ) or empty( $this->oauth_app_secret ) )
+		if ( empty( $this->oauth_app_key ) || empty( $this->oauth_app_secret ) )
 			throw new BackWPup_Destination_Dropbox_API_Exception( "No App key or App Secret specified." );
 	}
 
 	/**
 	 * @param $token
-	 * @param $secret
 	 * @throws BackWPup_Destination_Dropbox_API_Exception
 	 */
-	public function setOAuthTokens( $token, $secret ) {
+	public function setOAuthTokens( $token ) {
 
-		$this->oauth_token        = $token;
-		$this->oauth_token_secret = $secret;
+		if ( empty( $token[ 'access_token' ] ) )
+			throw new BackWPup_Destination_Dropbox_API_Exception( "No oAuth token specified." );
 
-		if ( empty( $this->oauth_token ) or empty( $this->oauth_token_secret ) )
-			throw new BackWPup_Destination_Dropbox_API_Exception( "No oAuth token or secret specified." );
+		$this->oauth_token = $token;
+	}
+
+	public function token_from_oauth1( ) {
+
+		$url = self::API_URL . self::API_VERSION_URL . 'oauth2/token_from_oauth1';
+
+		return $this->request( $url, array(), 'POST' );
 	}
 
 	/**
@@ -449,6 +445,13 @@ final class BackWPup_Destination_Dropbox_API {
 		$url = self::API_URL . self::API_VERSION_URL . 'account/info';
 
 		return $this->request( $url );
+	}
+
+	public function disable_access_token() {
+
+		$url = self::API_URL . self::API_VERSION_URL . 'disable_access_token';
+
+		return $this->request( $url, array(), 'POST' );
 	}
 
 	/**
@@ -462,16 +465,12 @@ final class BackWPup_Destination_Dropbox_API {
 
 		$file = str_replace( "\\", "/", $file );
 
-		if ( ! is_readable( $file ) or ! is_file( $file ) )
+		if ( ! is_readable( $file ) )
 			throw new BackWPup_Destination_Dropbox_API_Exception( "Error: File \"$file\" is not readable or doesn't exist." );
 
-		$filesize = filesize( $file );
-
-		if ( $filesize < 8388608 ) { //chunk transfer on bigger uploads
-			$filehandel = fopen( $file, 'r' );
+		if ( filesize( $file ) < 5242880 ) { //chunk transfer on bigger uploads
 			$url        = self::API_CONTENT_URL . self::API_VERSION_URL . 'files_put/' . $this->root . '/' . $this->encode_path( $path );
-			$output     = $this->request( $url, array( 'overwrite' => ( $overwrite ) ? 'true' : 'false' ), 'PUT', $filehandel, $filesize );
-			fclose( $filehandel );
+			$output     = $this->request( $url, array( 'overwrite' => ( $overwrite ) ? 'true' : 'false' ), 'PUT', file_get_contents( $file ) );
 		}
 		else {
 			$output = $this->chunked_upload( $file, $path, $overwrite );
@@ -488,54 +487,61 @@ final class BackWPup_Destination_Dropbox_API {
 	 * @throws BackWPup_Destination_Dropbox_API_Exception
 	 */
 	public function chunked_upload( $file, $path = '', $overwrite = TRUE ) {
-		
+
+		$backwpup_job_object = BackWPup_Destination_Dropbox::$backwpup_job_object;
+
 		$file = str_replace( "\\", "/", $file );
 
-		if ( ! is_readable( $file ) or ! is_file( $file ) )
+		if ( ! is_readable( $file ) )
 			throw new BackWPup_Destination_Dropbox_API_Exception( "Error: File \"$file\" is not readable or doesn't exist." );
 
-		$file_handel = fopen( $file, 'r' );
+		$chunk_size = 4194304; //4194304 = 4MB
+
+		$file_handel = fopen( $file, 'rb' );
 		if ( ! is_resource( $file_handel ) )
-			throw new BackWPup_Destination_Dropbox_API_Exception( "Can not open surce file for transfer." );
-		
-		//get the current job object
-		$job_object = BackWPup_Job::getInstance();
-		if ( ! isset( $job_object->steps_data[ $job_object->step_working ][ 'uploadid' ] ) )
-			$job_object->steps_data[ $job_object->step_working ][ 'uploadid' ] = NULL;
-		if ( ! isset( $job_object->steps_data[ $job_object->step_working ][ 'offset' ] ) )
-			$job_object->steps_data[ $job_object->step_working ][ 'offset' ] = 0;
-		
+			throw new BackWPup_Destination_Dropbox_API_Exception( "Can not open source file for transfer." );
+
+		if ( ! isset( $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'uploadid' ] ) )
+			$backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'uploadid' ] = NULL;
+		if ( ! isset( $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ] ) )
+			$backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ] = 0;
+
 		//seek to current position
-		if ( $job_object->steps_data[ $job_object->step_working ][ 'offset' ] > 0 )
-			fseek( $file_handel, $job_object->steps_data[ $job_object->step_working ][ 'offset' ] );
-		
-		while ( $data = fread( $file_handel, 4194304 ) ) { //4194304 = 4MB
-			$chunk_handle = fopen( 'php://temp/maxmemory:4194304', 'r+' );
-			if ( ! is_resource( $chunk_handle )  ) {
-				//fallback if php://temp not working
-				$chunk_handle = tmpfile();
-				if ( ! is_resource( $chunk_handle ) )
-					throw new BackWPup_Destination_Dropbox_API_Exception( "Can not open temp file for chunked transfer." );
-			}			
-			fwrite( $chunk_handle, $data );
-			rewind( $chunk_handle );
+		if ( $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ] > 0 )
+			fseek( $file_handel, $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ] );
+
+		while ( $data = fread( $file_handel, $chunk_size ) ) {
+			$chunk_upload_start = microtime( TRUE );
 			$url    = self::API_CONTENT_URL . self::API_VERSION_URL . 'chunked_upload';
-			$output = $this->request( $url, array( 'upload_id' => $job_object->steps_data[ $job_object->step_working ][ 'uploadid' ], 'offset' => $job_object->steps_data[ $job_object->step_working ][ 'offset' ] ), 'PUT', $chunk_handle, strlen( $data ) );
-			fclose( $chunk_handle );		
+			$output = $this->request( $url, array( 'upload_id' => $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'uploadid' ], 'offset' => $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ] ), 'PUT', $data );
+			$chunk_upload_time = microtime( TRUE ) - $chunk_upload_start;
 			//args for next chunk
-			$job_object->steps_data[ $job_object->step_working ][ 'offset' ]   = $output[ 'offset' ];
-			$job_object->steps_data[ $job_object->step_working ][ 'uploadid' ] = $output[ 'upload_id' ];
-			if ( $job_object->job[ 'backuptype' ] == 'archive' )
-				$job_object->substeps_done = $job_object->steps_data[ $job_object->step_working ][ 'offset' ];
-			$job_object->update_working_data();
+			$backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ]   = $output[ 'offset' ];
+			$backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'uploadid' ] = $output[ 'upload_id' ];
+			if ( $backwpup_job_object->job[ 'backuptype' ] == 'archive' ) {
+				$backwpup_job_object->substeps_done = $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ];
+				if ( strlen( $data ) == $chunk_size ) {
+					$time_remaining = $backwpup_job_object->do_restart_time();
+					//calc next chunk
+					if ( $time_remaining < $chunk_upload_time ) {
+						$chunk_size = floor ( $chunk_size / $chunk_upload_time * ( $time_remaining - 3 ) );
+						if ( $chunk_size < 0 )
+							$chunk_size = 1024;
+						if ( $chunk_size > 4194304 )
+							$chunk_size = 4194304;
+					}
+				}
+			}
+			$backwpup_job_object->update_working_data();
 			//correct position
-			fseek( $file_handel, $job_object->steps_data[ $job_object->step_working ][ 'offset' ] );
+			fseek( $file_handel, $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'offset' ] );
 		}
 
 		fclose( $file_handel );
+
 		$url = self::API_CONTENT_URL . self::API_VERSION_URL . 'commit_chunked_upload/' . $this->root . '/' . $this->encode_path( $path );
 
-		return $this->request( $url, array( 'overwrite' => ( $overwrite ) ? 'true' : 'false', 'upload_id' => $job_object->steps_data[ $job_object->step_working ][ 'uploadid' ] ), 'POST' );
+		return $this->request( $url, array( 'overwrite' => ( $overwrite ) ? 'true' : 'false', 'upload_id' => $backwpup_job_object->steps_data[ $backwpup_job_object->step_working ][ 'uploadid' ] ), 'POST' );
 	}
 
 	/**
@@ -549,7 +555,7 @@ final class BackWPup_Destination_Dropbox_API {
 		if ( ! $echo )
 			return $this->request( $url );
 		else {
-			$this->request( $url, NULL, 'GET', NULL, 0, TRUE );
+			$this->request( $url, NULL, 'GET', '', TRUE );
 			return '';
 		}
 	}
@@ -571,7 +577,7 @@ final class BackWPup_Destination_Dropbox_API {
 										  'file_limit' => $fileLimit
 									 ) );
 	}
-	
+
 	/**
 	 * @param string $path
 	 * @return array|mixed|string
@@ -597,104 +603,47 @@ final class BackWPup_Destination_Dropbox_API {
 									 ) );
 	}
 
-	/**
-	 * @param $callback_url
-	 * @return array
-	 * @throws BackWPup_Destination_Dropbox_API_Exception
-	 */
-	public function oAuthAuthorize( $callback_url ) {
+	public function oAuthAuthorize( ) {
 
-		$headers[ ] = 'Authorization: OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="' . $this->oauth_app_key . '", oauth_signature="' . $this->oauth_app_secret . '&"';
-		$ch         = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, self::API_URL . self::API_VERSION_URL . 'oauth/request_token' );
-		curl_setopt( $ch, CURLOPT_USERAGENT, BackWPup::get_plugin_data( 'User-Agent' ) );
-		curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-		curl_setopt( $ch, CURLOPT_SSLVERSION, 3 );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, TRUE );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
-		if ( is_file( BackWPup::get_plugin_data( 'plugindir' ) . '/inc/cacert.pem' ) )
-			curl_setopt( $ch, CURLOPT_CAINFO, BackWPup::get_plugin_data( 'plugindir' ) . '/inc/cacert.pem' );
-		curl_setopt( $ch, CURLOPT_AUTOREFERER, TRUE );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-		$content = curl_exec( $ch );
-		$status  = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		if ( $status >= 200 && $status < 300 && 0 == curl_errno( $ch ) ) {
-			parse_str( $content, $oauth_token );
-		}
-		else {
-			$output = json_decode( $content, TRUE );
-			if ( isset( $output[ 'error' ] ) && is_string( $output[ 'error' ] ) ) $message = $output[ 'error' ];
-			elseif ( isset( $output[ 'error' ][ 'hash' ] ) && $output[ 'error' ][ 'hash' ] != '' ) $message = (string)$output[ 'error' ][ 'hash' ];
-			elseif ( 0 != curl_errno( $ch ) ) $message = '(' . curl_errno( $ch ) . ') ' . curl_error( $ch );
-			else $message = '(' . $status . ') Invalid response.';
-			throw new BackWPup_Destination_Dropbox_API_Exception( $message );
-		}
-		curl_close( $ch );
-
-		return array(
-			'authurl'            => self::API_WWW_URL . self::API_VERSION_URL . 'oauth/authorize?oauth_token=' . $oauth_token[ 'oauth_token' ] . '&oauth_callback=' . urlencode( $callback_url ),
-			'oauth_token'        => $oauth_token[ 'oauth_token' ],
-			'oauth_token_secret' => $oauth_token[ 'oauth_token_secret' ]
-		);
+		return self::API_WWW_URL . self::API_VERSION_URL . 'oauth2/authorize?response_type=code&client_id=' . $this->oauth_app_key;
 	}
 
-	/**
-	 * @param $oauth_token
-	 * @param $oauth_token_secret
-	 *
-	 * @return array|null
-	 * @throws BackWPup_Destination_Dropbox_API_Exception
-	 */
-	public function oAuthAccessToken( $oauth_token, $oauth_token_secret ) {
 
-		$headers[ ] = 'Authorization: OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="' . $this->oauth_app_key . '", oauth_token="' . $oauth_token . '", oauth_signature="' . $this->oauth_app_secret . '&' . $oauth_token_secret . '"';
-		$ch         = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, self::API_URL . self::API_VERSION_URL . 'oauth/access_token' );
-		curl_setopt( $ch, CURLOPT_USERAGENT, BackWPup::get_plugin_data( 'User-Agent' ) );
-		curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
-		curl_setopt( $ch, CURLOPT_SSLVERSION, 3 );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, TRUE );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
-		if ( is_file( BackWPup::get_plugin_data( 'plugindir' ) . '/inc/cacert.pem' ) )
-			curl_setopt( $ch, CURLOPT_CAINFO, BackWPup::get_plugin_data( 'plugindir' ) . '/inc/cacert.pem' );
-		curl_setopt( $ch, CURLOPT_AUTOREFERER, TRUE );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-		$content = curl_exec( $ch );
-		$status  = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		if ( $status >= 200 && $status < 300 && 0 == curl_errno( $ch ) ) {
-			parse_str( $content, $oauth_token );
-			$this->setOAuthTokens( $oauth_token[ 'oauth_token' ], $oauth_token[ 'oauth_token_secret' ] );
+	public function oAuthToken( $code ) {
 
-			return $oauth_token;
-		}
-		else {
-			$output = json_decode( $content, TRUE );
-			if ( isset( $output[ 'error' ] ) && is_string( $output[ 'error' ] ) ) $message = $output[ 'error' ];
-			elseif ( isset( $output[ 'error' ][ 'hash' ] ) && $output[ 'error' ][ 'hash' ] != '' ) $message = (string)$output[ 'error' ][ 'hash' ];
-			elseif ( 0 != curl_errno( $ch ) ) $message = '(' . curl_errno( $ch ) . ') ' . curl_error( $ch );
-			else $message = '(' . $status . ') Invalid response.';
-			throw new BackWPup_Destination_Dropbox_API_Exception( $message );
-		}
+		$url = self::API_URL . self::API_VERSION_URL . 'oauth2/token';
+
+		return $this->request( $url, array(
+									   'code' => trim( $code ),
+									   'grant_type' => 'authorization_code',
+									   'client_id' => $this->oauth_app_key,
+									   'client_secret' => $this->oauth_app_secret
+								   ), 'POST' );
+
 	}
+
 
 	/**
 	 * @param        $url
 	 * @param array  $args
 	 * @param string $method
-	 * @param null   $filehandel
-	 * @param int    $filesize
+	 * @param string $data
 	 * @param bool   $echo
 	 *
 	 * @throws BackWPup_Destination_Dropbox_API_Exception
 	 * @internal param null $file
 	 * @return array|mixed|string
 	 */
-	private function request( $url, $args = array(), $method = 'GET', $filehandel = NULL, $filesize = 0, $echo = FALSE ) {
+	private function request( $url, $args = array(), $method = 'GET', $data = '', $echo = FALSE ) {
 
 		/* Header*/
-		$headers[ ] = 'Authorization: OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="' . $this->oauth_app_key . '", oauth_token="' . $this->oauth_token . '", oauth_signature="' . $this->oauth_app_secret . '&' . $this->oauth_token_secret . '"';
+		// oAuth 2
+		if ( ! empty( $this->oauth_token[ 'access_token' ] ) && ! empty( $this->oauth_token[ 'token_type' ] ) && strtolower( $this->oauth_token[ 'token_type' ] ) == 'bearer'  )
+			$headers[ ] = 'Authorization: Bearer ' . $this->oauth_token[ 'access_token' ] ;
+		// oAuth 1
+		elseif ( ! empty( $this->oauth_token[ 'access_token' ] ) &&  ! empty( $this->oauth_token[ 'oauth_token_secret' ] ) )
+			$headers[ ] = 'Authorization: OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="' . $this->oauth_app_key . '", oauth_token="' . $this->oauth_token[ 'access_token' ] . '", oauth_signature="' . $this->oauth_app_secret . '&' . $this->oauth_token[ 'oauth_token_secret' ] . '"';
+
 		$headers[ ] = 'Expect:';
 
 		/* Build cURL Request */
@@ -705,9 +654,9 @@ final class BackWPup_Destination_Dropbox_API {
 			curl_setopt( $ch, CURLOPT_URL, $url );
 		}
 		elseif ( $method == 'PUT' ) {
-			curl_setopt( $ch, CURLOPT_PUT, TRUE );
-			curl_setopt( $ch, CURLOPT_INFILE, $filehandel );
-			curl_setopt( $ch, CURLOPT_INFILESIZE, $filesize );
+			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'PUT' );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
+			$headers[ ] = 'Content-Type: application/octet-stream';
 			$args = ( is_array( $args ) ) ? '?' . http_build_query( $args, '', '&' ) : $args;
 			curl_setopt( $ch, CURLOPT_URL, $url . $args );
 		}
@@ -717,25 +666,54 @@ final class BackWPup_Destination_Dropbox_API {
 			curl_setopt( $ch, CURLOPT_URL, $url . $args );
 		}
 		curl_setopt( $ch, CURLOPT_USERAGENT, BackWPup::get_plugin_data( 'User-Agent' ) );
-		curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-		curl_setopt( $ch, CURLOPT_SSLVERSION, 3 );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, TRUE );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 2 );
-		if ( is_file( BackWPup::get_plugin_data( 'plugindir' ) . '/inc/cacert.pem' ) )
-			curl_setopt( $ch, CURLOPT_CAINFO, BackWPup::get_plugin_data( 'plugindir' ) . '/inc/cacert.pem' );
+		if ( BackWPup::get_plugin_data( 'cacert' ) ) {
+			curl_setopt( $ch, CURLOPT_SSLVERSION, 1 );
+			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, TRUE );
+			$curl_version = curl_version();
+			if ( strstr( $curl_version[ 'ssl_version' ], 'NSS/' ) === FALSE ) {
+				curl_setopt( $ch, CURLOPT_SSL_CIPHER_LIST,
+		             'ECDHE-RSA-AES256-GCM-SHA384:'.
+		             'ECDHE-RSA-AES128-GCM-SHA256:'.
+		             'ECDHE-RSA-AES256-SHA384:'.
+		             'ECDHE-RSA-AES128-SHA256:'.
+		             'ECDHE-RSA-AES256-SHA:'.
+		             'ECDHE-RSA-AES128-SHA:'.
+		             'ECDHE-RSA-RC4-SHA:'.
+		             'DHE-RSA-AES256-GCM-SHA384:'.
+		             'DHE-RSA-AES128-GCM-SHA256:'.
+		             'DHE-RSA-AES256-SHA256:'.
+		             'DHE-RSA-AES128-SHA256:'.
+		             'DHE-RSA-AES256-SHA:'.
+		             'DHE-RSA-AES128-SHA:'.
+		             'AES256-GCM-SHA384:'.
+		             'AES128-GCM-SHA256:'.
+		             'AES256-SHA256:'.
+		             'AES128-SHA256:'.
+		             'AES256-SHA:'.
+		             'AES128-SHA'
+				);
+			}
+			if ( defined( 'CURLOPT_PROTOCOLS' ) )
+				curl_setopt( $ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS );
+			if ( defined( 'CURLOPT_REDIR_PROTOCOLS' ) )
+				curl_setopt( $ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS );
+			curl_setopt( $ch, CURLOPT_CAINFO, BackWPup::get_plugin_data( 'cacert' ) );
+			curl_setopt( $ch, CURLOPT_CAPATH, dirname( BackWPup::get_plugin_data( 'cacert' ) ) );
+		} else {
+			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, FALSE );
+		}
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		$content = '';
 		$output = '';
-		$header = '';
 		if ( $echo ) {
 			echo curl_exec( $ch );
 		}
 		else {
 			curl_setopt( $ch, CURLOPT_HEADER, TRUE );
 			if ( 0 == curl_errno( $ch ) ) {
-				list( $header, $content ) = explode( "\r\n\r\n", curl_exec( $ch ), 2 );
-				$output = json_decode( $content, TRUE );
+				$responce = explode( "\r\n\r\n", curl_exec( $ch ), 2 );
+				if ( ! empty( $responce[ 1 ] ) )
+					$output = json_decode( $responce[ 1 ], TRUE );
 			}
 		}
 		$status = curl_getinfo( $ch );
@@ -744,18 +722,18 @@ final class BackWPup_Destination_Dropbox_API {
 
 		if ( $status[ 'http_code' ] == 503 ) {
 			$wait = 0;
-			if ( preg_match( "/retry-after:(.*?)\r/i", $header, $matches ) )
+			if ( preg_match( "/retry-after:(.*?)\r/i", $responce[ 0 ], $matches ) )
 				$wait = trim( $matches[ 1 ] );
 			//only wait if we get a retry-after header.
 			if ( ! empty( $wait ) ) {
 				trigger_error( sprintf( '(503) Your app is making too many requests and is being rate limited. Error 503 can be triggered on a per-app or per-user basis. Wait for %d seconds.', $wait ), E_USER_WARNING );
 				sleep( $wait );
 			} else {
-				trigger_error( '(503) Service unavailable. Retrying.', E_USER_WARNING );
+				throw new BackWPup_Destination_Dropbox_API_Exception( '(503) This indicates a transient server error.' );
 			}
 			//redo request
-			return $this->request( $url, $args, $method, $filehandel, $filesize, $echo );
-		} 
+			return $this->request( $url, $args, $method, $data, $echo );
+		}
 		elseif ( $status[ 'http_code' ] == 400 && $method == 'PUT' ) {	//correct offset on chunk uploads
 			trigger_error( '(' . $status[ 'http_code' ] . ') False offset will corrected', E_USER_NOTICE );
 			return $output;
@@ -770,23 +748,23 @@ final class BackWPup_Destination_Dropbox_API {
 			elseif ( isset( $output[ 'error' ][ 'hash' ] ) && $output[ 'error' ][ 'hash' ] != '' ) $message = (string)'(' . $status[ 'http_code' ] . ') ' . $output[ 'error' ][ 'hash' ];
 			elseif ( 0 != curl_errno( $ch ) ) $message = '(' . curl_errno( $ch ) . ') ' . curl_error( $ch );
 			elseif ( $status[ 'http_code' ] == 304 ) $message = '(304) Folder contents have not changed (relies on hash parameter).';
-			elseif ( $status[ 'http_code' ] == 400 ) $message = '(400) Bad input parameter: ' . strip_tags( $content );
-			elseif ( $status[ 'http_code' ] == 401 ) $message = '(401) Bad or expired token. Please re-authenticate the user.';
-			elseif ( $status[ 'http_code' ] == 403 ) $message = '(403) Bad OAuth request (wrong consumer key, bad nonce, expired timestamp,&hellip;)';
-			elseif ( $status[ 'http_code' ] == 404 ) $message = '(404) File could not be found at the specified path or rev.';
-			elseif ( $status[ 'http_code' ] == 405 ) $message = '(405) Request method not expected (generally should be GET,PUT or POST).';
+			elseif ( $status[ 'http_code' ] == 400 ) $message = '(400) Bad input parameter: ' . strip_tags( $responce[ 1 ] );
+			elseif ( $status[ 'http_code' ] == 401 ) $message = '(401) Bad or expired token. This can happen if the user or Dropbox revoked or expired an access token. To fix, you should re-authenticate the user.';
+			elseif ( $status[ 'http_code' ] == 403 ) $message = '(403) Bad OAuth request (wrong consumer key, bad nonce, expired timestamp...). Unfortunately, re-authenticating the user won\'t help here.';
+			elseif ( $status[ 'http_code' ] == 404 ) $message = '(404) File or folder not found at the specified path.';
+			elseif ( $status[ 'http_code' ] == 405 ) $message = '(405) Request method not expected (generally should be GET or POST).';
 			elseif ( $status[ 'http_code' ] == 406 ) $message = '(406) There are too many file entries to return.';
-			elseif ( $status[ 'http_code' ] == 411 ) $message = '(411) Chunked encoding was attempted for this upload, but is not supported by Dropbox.';
-			elseif ( $status[ 'http_code' ] == 415 ) $message = '(415) The image is invalid and cannot be thumbnailed.';
-			elseif ( $status[ 'http_code' ] == 503 ) $message = '(503) Service unavailable.';
-			elseif ( $status[ 'http_code' ] == 507 ) $message = '(507) User exceeding Dropbox storage quota.';
+			elseif ( $status[ 'http_code' ] == 411 ) $message = '(411) Missing Content-Length header (this endpoint doesn\'t support HTTP chunked transfer encoding).';
+			elseif ( $status[ 'http_code' ] == 415 ) $message = '(415) The image is invalid and cannot be converted to a thumbnail.';
+			elseif ( $status[ 'http_code' ] == 429 ) $message = '(429) Your app is making too many requests and is being rate limited. 429s can trigger on a per-app or per-user basis.';
+			elseif ( $status[ 'http_code' ] == 507 ) $message = '(507) User is over Dropbox storage quota.';
 			else $message = '(' . $status[ 'http_code' ] . ') Invalid response.';
 			throw new BackWPup_Destination_Dropbox_API_Exception( $message );
 		}
 		else {
 			curl_close( $ch );
 			if ( ! is_array( $output ) )
-				return $content;
+				return $responce[ 1 ];
 			else
 				return $output;
 		}

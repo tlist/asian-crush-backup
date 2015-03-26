@@ -7,7 +7,26 @@ Description: Security solution as a smart, effectively plugin to protect your bl
 Author: Sergej M&uuml;ller
 Author URI: http://wpcoder.de
 Plugin URI: http://wpantivirus.com
-Version: 1.3.4
+License: GPLv2 or later
+Version: 1.3.8
+*/
+
+/*
+Copyright (C)  2009-2015 Sergej Müller
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 
@@ -47,7 +66,7 @@ class AntiVirus {
 	* Konstruktor der Klasse
 	*
 	* @since   0.1
-	* @change  1.3.4
+	* @change  1.3.5
 	*/
 
 	public function __construct()
@@ -100,14 +119,6 @@ class AntiVirus {
 					)
 				);
 				add_action(
-					'admin_bar_menu',
-					array(
-						__CLASS__,
-						'add_adminbar_menu'
-					),
-					91
-				);
-				add_action(
 					'admin_notices',
 					array(
 						__CLASS__,
@@ -115,49 +126,28 @@ class AntiVirus {
 					)
 				);
 				add_action(
-					'admin_print_styles',
+					'deactivate_' .self::$base,
 					array(
 						__CLASS__,
-						'add_enqueue_style'
+						'clear_scheduled_hook'
 					)
 				);
-
-				/* GUI */
-				if ( self::_is_current_page('home') ) {
-					add_action(
-						'admin_print_scripts',
-						array(
-							__CLASS__,
-							'add_enqueue_script'
-						)
-					);
-
-				/* Plugins */
-				} else if ( self::_is_current_page('plugins') ) {
-					add_action(
-						'deactivate_' .self::$base,
-						array(
-							__CLASS__,
-							'clear_scheduled_hook'
-						)
-					);
-					add_filter(
-						'plugin_row_meta',
-						array(
-							__CLASS__,
-							'init_row_meta'
-						),
-						10,
-						2
-					);
-					add_filter(
-						'plugin_action_links_' .self::$base,
-						array(
-							__CLASS__,
-							'init_action_links'
-						)
-					);
-				}
+				add_filter(
+					'plugin_row_meta',
+					array(
+						__CLASS__,
+						'init_row_meta'
+					),
+					10,
+					2
+				);
+				add_filter(
+					'plugin_action_links_' .self::$base,
+					array(
+						__CLASS__,
+						'init_action_links'
+					)
+				);
 			}
 		}
 	}
@@ -236,7 +226,7 @@ class AntiVirus {
 			$data,
 			array(
 				'<a href="https://flattr.com/t/1322865" target="_blank">Flattr</a>',
-				'<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5RDDW9FEHGLG6" target="_blank">PayPal</a>'
+				'<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=ZAQUT9RLPW8QN" target="_blank">PayPal</a>'
 			)
 		);
 	}
@@ -283,15 +273,11 @@ class AntiVirus {
 	* Uninstallation des Plugins pro MU-Blog
 	*
 	* @since   1.1
-	* @change  1.3.4
+	* @change  1.3.5
 	*/
 
 	public static function uninstall()
 	{
-		/* Global */
-		global $wpdb;
-
-		/* Remove settings */
 		delete_option('antivirus');
 	}
 
@@ -427,7 +413,7 @@ class AntiVirus {
 	* Führt die Safe Browsing Prüfung aus
 	*
 	* @since   1.3.4
-	* @change  1.3.4
+	* @change  1.3.7
 	*/
 
 	private static function _check_safe_browsing()
@@ -440,12 +426,9 @@ class AntiVirus {
 		/* Start request */
 		$response = wp_remote_get(
 			sprintf(
-				'https://sb-ssl.google.com/safebrowsing/api/lookup?client=wpantivirus&apikey=%s&appver=0.1&pver=3.0&url=%s',
-				'ABQIAAAAsu9cf81zMEioUOLBi7TrhhTJnIkNNG4BG3awC5RGoTZgJ-xX-A', /* API Key reserved only for AntiVirus */
+				'https://sb-ssl.google.com/safebrowsing/api/lookup?client=wpantivirus&key=%s&appver=1.3.7&pver=3.1&url=%s',
+				'AIzaSyALNYwuy-Pidn7vx3-In-hU0zgMH5Wr42U',
 				urlencode( get_bloginfo('url') )
-			),
-			array(
-				'sslverify' => false
 			)
 		);
 
@@ -455,7 +438,7 @@ class AntiVirus {
 		}
 
 		/* All clear */
-		if ( wp_remote_retrieve_response_code($response) == 204 ) {
+		if ( wp_remote_retrieve_response_code($response) === 204 ) {
 			return;
 		}
 
@@ -463,7 +446,7 @@ class AntiVirus {
 		self::_send_warning_notification(
 			esc_html__('Safe Browsing Alert', 'antivirus'),
 			sprintf(
-				"%s\r\nhttp://www.google.com/safebrowsing/diagnostic?site=%s&hl=%s",
+				"%s\r\nhttps://www.google.com/safebrowsing/diagnostic?site=%s&hl=%s",
 				esc_html__('Please check the Google Safe Browsing diagnostic page:', 'antivirus'),
 				urlencode( get_bloginfo('url') ),
 				substr(get_locale(), 0, 2)
@@ -508,7 +491,7 @@ class AntiVirus {
 	* Führt die Safe Browsing Prüfung aus
 	*
 	* @since   1.3.4
-	* @change  1.3.4
+	* @change  1.3.6
 	*
 	* @param   string  $subject  Betreff der E-Mail
 	* @param   string  $body     Inhalt der E-Mail
@@ -517,9 +500,10 @@ class AntiVirus {
 	private static function _send_warning_notification($subject, $body)
 	{
 		/* Receiver email address */
-		if ( $email = self::_get_option('notify_email') ) {
-			$email = sanitize_email($email);
-		}	else {
+		$email = self::_get_option('notify_email');
+
+		/* Email address fallback */
+		if ( ! is_email($email) ) {
 			$email = get_bloginfo('admin_email');
 		}
 
@@ -545,13 +529,13 @@ class AntiVirus {
 	* Initialisierung der GUI
 	*
 	* @since   0.1
-	* @change  1.3.1
+	* @change  1.3.5
 	*/
 
 	public static function add_sidebar_menu()
 	{
 		/* Menü anlegen */
-		add_options_page(
+		$page = add_options_page(
 			'AntiVirus',
 			'AntiVirus',
 			'manage_options',
@@ -561,6 +545,21 @@ class AntiVirus {
 				'show_admin_menu'
 			)
 		);
+
+		add_action(
+			'admin_print_styles-' . $page,
+			array(
+				__CLASS__,
+				'add_enqueue_style'
+			)
+		);
+		add_action(
+			'admin_print_scripts-' . $page,
+			array(
+				__CLASS__,
+				'add_enqueue_script'
+			)
+		);
 	}
 
 
@@ -568,7 +567,7 @@ class AntiVirus {
 	* Initialisierung von JavaScript
 	*
 	* @since   0.8
-	* @change  1.3.4
+	* @change  1.3.5
 	*/
 
 	public static function add_enqueue_script()
@@ -593,11 +592,10 @@ class AntiVirus {
 			'av_settings',
 			array(
 				'nonce' => wp_create_nonce('av_ajax_nonce'),
-				'ajax' 	=> admin_url('admin-ajax.php'),
-				'theme'	=> urlencode(self::_get_theme_name()),
-				'msg_1'	=> esc_html__('There is no virus', 'antivirus'),
-				'msg_2' => esc_html__('View line', 'antivirus'),
-				'msg_3' => esc_html__('Scan finished', 'antivirus')
+				'theme'	=> esc_js(urlencode(self::_get_theme_name())),
+				'msg_1'	=> esc_js(__('There is no virus', 'antivirus')),
+				'msg_2' => esc_js(__('View line', 'antivirus')),
+				'msg_3' => esc_js(__('Scan finished', 'antivirus'))
 			)
 		);
 	}
@@ -632,46 +630,30 @@ class AntiVirus {
 	* Rückgabe des aktuellen Theme
 	*
 	* @since   0.1
-	* @change  1.3.4
+	* @change  1.3.6
 	*
 	* @return  array  $themes  Array mit Theme-Eigenschaften
 	*/
 
 	private static function _get_current_theme()
 	{
-		/* Ab WP 3.4 */
-		if ( function_exists('wp_get_theme') ) {
-			/* Init */
-			$theme = wp_get_theme();
-			$name = $theme->get('Name');
-			$slug = $theme->get_stylesheet();
-			$files = $theme->get_files('php', 1);
+		/* Init */
+		$theme = wp_get_theme();
+		$name = $theme->get('Name');
+		$slug = $theme->get_stylesheet();
+		$files = $theme->get_files('php', 1);
 
-			/* Leer? */
-			if ( empty($name) OR empty($files) ) {
-				return false;
-			}
-
-			/* Rückgabe */
-			return array(
-				'Name' => $name,
-				'Slug' => $slug,
-				'Template Files' => $files
-			);
-		/* Bis WP 3.4 */
-		} else {
-			if ( $themes = get_themes() ) {
-				/* Aktuelles Theme */
-				if ( $theme = get_current_theme() ) {
-					if ( array_key_exists((string)$theme, $themes) ) {
-						return $themes[$theme];
-					}
-				}
-			}
-
+		/* Leer? */
+		if ( empty($name) OR empty($files) ) {
+			return false;
 		}
 
-		return false;
+		/* Rückgabe */
+		return array(
+			'Name' => $name,
+			'Slug' => $slug,
+			'Template Files' => $files
+		);
 	}
 
 
@@ -768,6 +750,11 @@ class AntiVirus {
 			exit();
 		}
 
+		/* Capability check */
+		if ( ! current_user_can('manage_options') ) {
+			return;
+		}
+
 		/* Init */
 		$values = array();
 		$output = '';
@@ -796,7 +783,7 @@ class AntiVirus {
 			break;
 
 			case 'update_white_list':
-				if ( ! empty($_POST['_file_md5']) ) {
+				if ( ! empty($_POST['_file_md5']) && preg_match('/^[a-f0-9]{32}$/', $_POST['_file_md5']) ) {
 					self::_update_option(
 						'white_list',
 						implode(
@@ -820,19 +807,11 @@ class AntiVirus {
 
 		/* Ausgabe starten */
 		if ( $values ) {
-			$output = sprintf(
-				"['%s']",
-				implode("', '", $values)
-			);
-
-			/* Header senden */
-			header('Content-Type: plain/text');
-
-			/* Ausgeben */
-			echo sprintf(
-				'{data:%s, nonce:"%s"}',
-				$output,
-				$_POST['_ajax_nonce']
+			wp_send_json(
+				array(
+					'data'  => array_values($values),
+					'nonce' => $_POST['_ajax_nonce']
+				)
 			);
 		}
 
@@ -922,7 +901,7 @@ class AntiVirus {
 	* Prüfung einer Zeile
 	*
 	* @since   0.1
-	* @change  1.3.4
+	* @change  1.3.8
 	*
 	* @param   string   $line  Zeile zur Prüfung
 	* @param   integer  $num   Nummer zur Prüfung
@@ -955,6 +934,7 @@ class AntiVirus {
 			$results = $matches[1];
 		}
 
+
 		/* Base64 suchen */
 		preg_match_all(
 			'/[\'\"\$\\ \/]*?([a-zA-Z0-9]{' .strlen(base64_encode('sergej + swetlana = love.')). ',})/', /* get length of my life ;) */
@@ -967,6 +947,7 @@ class AntiVirus {
 			$results = array_merge($results, $matches[1]);
 		}
 
+
 		/* Frames suchen */
 		preg_match_all(
 			'/<\s*?(i?frame)/',
@@ -978,6 +959,20 @@ class AntiVirus {
 		if ( $matches[1] ) {
 			$results = array_merge($results, $matches[1]);
 		}
+
+
+		/* MailPoet Vulnerability */
+		preg_match_all(
+			'/explode\s?\(chr\s?\(\s?\(\d{3}\s?-\s?\d{3}\s?\)\s?\)\s?,/',
+			$line,
+			$matches
+		);
+
+		/* Ergebnis speichern */
+		if ( $matches[0] ) {
+			$results = array_merge($results, $matches[0]);
+		}
+
 
 		/* Option suchen */
 		preg_match(
@@ -1059,7 +1054,7 @@ class AntiVirus {
 	* Prüfung einer Datei
 	*
 	* @since   0.1
-	* @change  1.3.4
+	* @change  1.3.6
 	*
 	* @param   string  $file     Datei zur Prüfung
 	* @return  mixed   $results  Array mit Ergebnissen | FALSE im Fehlerfall
@@ -1067,6 +1062,16 @@ class AntiVirus {
 
 	private static function _check_theme_file($file)
 	{
+		/* Simple file path check */
+		if ( filter_var($file, FILTER_SANITIZE_URL) !== $file ) {
+			return false;
+		}
+
+		/* Sanitize file string */
+		if ( validate_file($file) !== 0 ) {
+			return false;
+		}
+
 		/* Kein File? */
 		if ( ! $file ) {
 			return false;
@@ -1126,36 +1131,10 @@ class AntiVirus {
 
 
 	/**
-	* Prüfung der Admin-Seite
-	*
-	* @since   0.1
-	* @change  0.8
-	*
-	* @param   integer  $page  Gesuchte Seite
-	* @return  boolean         TRUE, wenn die aktuelle auch die gesuchte Seite ist
-	*/
-
-	private static function _is_current_page($page)
-	{
-		switch($page) {
-			case 'home':
-				return ( !empty($_REQUEST['page']) && $_REQUEST['page'] == 'antivirus' );
-
-			case 'index':
-			case 'plugins':
-				return ( !empty($GLOBALS['pagenow']) && $GLOBALS['pagenow'] == sprintf('%s.php', $page) );
-
-			default:
-				return false;
-		}
-	}
-
-
-	/**
 	* Anzeige des Dashboard-Hinweises
 	*
 	* @since   0.1
-	* @change  1.3.4
+	* @change  1.3.5
 	*/
 
 	public static function show_dashboard_notice() {
@@ -1164,14 +1143,9 @@ class AntiVirus {
 			return;
 		}
 
-		/* Bereits in der Adminbar */
-		if ( function_exists('is_admin_bar_showing') && is_admin_bar_showing() ) {
-			return;
-		}
-
 		/* Warnung */
 		echo sprintf(
-			'<div class="updated fade"><p><strong>%1$s:</strong> %2$s <a href="%3$s">%4$s &rarr;</a></p></div>',
+			'<div class="error"><p><strong>%1$s:</strong> %2$s <a href="%3$s">%4$s &rarr;</a></p></div>',
 			esc_html__('Virus suspected', 'antivirus'),
 			esc_html__('The daily antivirus scan of your blog suggests alarm.', 'antivirus'),
 			add_query_arg(
@@ -1180,43 +1154,7 @@ class AntiVirus {
 				),
 				admin_url('options-general.php')
 			),
-			esc_html__('Manual scan', 'antivirus')
-		);
-	}
-
-
-	/**
-	* Anzeige des Menüs in der Adminbar
-	*
-	* @since   1.2
-	* @change  1.3.4
-	*
-	* @param   object  $wp_admin_bar  Adminbar-Object
-	*/
-
-	public static function add_adminbar_menu($wp_admin_bar) {
-		/* Kein Alert? */
-		if ( ! self::_get_option('cronjob_alert') ) {
-			return;
-		}
-
-		/* Keine Adminbar? */
-		if ( ! function_exists('is_admin_bar_showing') OR ! is_admin_bar_showing() ) {
-			return;
-		}
-
-		/* Hinzufügen */
-		$wp_admin_bar->add_menu(
-			array(
-				'id' 	=> 'antivirus',
-				'title' => '<span class="ab-icon"></span><span class="ab-label">' .esc_html__('Virus suspected', 'antivirus'). '</span>',
-				'href'  => add_query_arg(
-					array(
-						'page' => 'antivirus'
-					),
-					admin_url('options-general.php')
-				)
-			)
+			esc_html__('Manual malware scan', 'antivirus')
 		);
 	}
 
@@ -1225,7 +1163,7 @@ class AntiVirus {
 	* Anzeige der GUI
 	*
 	* @since   0.1
-	* @change  1.3.4
+	* @change  1.3.6
 	*/
 
 	public static function show_admin_menu() {
@@ -1237,7 +1175,7 @@ class AntiVirus {
 			/* Werte zuweisen */
 			$options = array(
 				'cronjob_enable' => (int)(!empty($_POST['av_cronjob_enable'])),
-				'notify_email'	 => is_email(@$_POST['av_notify_email']),
+				'notify_email'	 => sanitize_email(@$_POST['av_notify_email']),
 				'safe_browsing'  => (int)(!empty($_POST['av_safe_browsing']))
 			);
 
@@ -1267,110 +1205,92 @@ class AntiVirus {
 		<?php } ?>
 
 		<div class="wrap" id="av_main">
-			<div class="icon32"></div>
-
 			<h2>
 				AntiVirus
 			</h2>
 
-			<form method="post" action="">
-				<?php wp_nonce_field('antivirus') ?>
-
-				<div id="poststuff">
-					<div class="postbox">
-						<h3>
-							<?php esc_html_e('Scan via cronjob', 'antivirus') ?>
-						</h3>
-
-						<div class="inside">
-							<table class="form-table">
-								<tr>
-									<td>
-										<input type="checkbox" name="av_cronjob_enable" id="av_cronjob_enable" value="1" <?php checked(self::_get_option('cronjob_enable'), 1) ?> />
-									</td>
-									<td>
-										<label for="av_cronjob_enable">
-											<?php esc_html_e('Enable the daily antivirus scan', 'antivirus') ?>
-											<small>
-												<?php if ( $timestamp = wp_next_scheduled('antivirus_daily_cronjob') ) {
-													echo sprintf(
-														'%s: %s',
-														esc_html__('Next check', 'antivirus'),
-														date_i18n('d.m.Y H:i:s', $timestamp + get_option('gmt_offset') * 3600)
-													);
-												} ?>
-											</small>
-										</label>
-									</td>
-								</tr>
-
-								<tr>
-									<td></td>
-									<td>
-										<label for="av_notify_email">
-											<?php esc_html_e('Alternate e-mail address for notifications', 'antivirus') ?>
-										</label>
-										<small>
-											<?php esc_html_e('If the field is empty, the blog admin will be notified', 'antivirus') ?>
-										</small>
-										<input type="text" name="av_notify_email" id="av_notify_email" value="<?php esc_attr_e(self::_get_option('notify_email')) ?>" class="regular-text" />
-									</td>
-								</tr>
-
-								<tr>
-									<td></td>
-									<td>
-										<table>
-											<tr>
-												<td>
-													<input type="checkbox" name="av_safe_browsing" id="av_safe_browsing" value="1" <?php checked(self::_get_option('safe_browsing'), 1) ?> />
-												</td>
-												<td>
-													<label for="av_safe_browsing">
-														<?php esc_html_e('Malware and phishing detection by Google', 'antivirus') ?>
-													</label>
-													<small>
-														<?php echo sprintf(
-															esc_html__('Use %s for malware monitoring', 'antivirus'),
-															'<a href="http://en.wikipedia.org/wiki/Google_Safe_Browsing" target="_blank">Google Safe Browsing</a>'
-														) ?>
-													</small>
-												</td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-							</table>
-
-							<div class="ab-column ab-submit">
-								<p>
-									<?php if ( get_locale() == 'de_DE' ) { ?>
-										<a href="http://playground.ebiene.de/antivirus-wordpress-plugin/" target="_blank">Handbuch</a>
-									<?php } ?>
-									<a href="https://flattr.com/t/1322865" target="_blank">Flattr</a>
-									<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=5RDDW9FEHGLG6" target="_blank">PayPal</a>
-								</p>
-
-								<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-							</div>
-						</div>
-					</div>
-
-
-					<div class="postbox">
-						<h3>
-							<?php esc_html_e('Manual scan', 'antivirus') ?>
-						</h3>
-
-						<div class="inside" id="av_manual">
+			<table class="form-table">
+				<tr valign="top">
+					<th scope="row">
+						<?php esc_html_e('Manual malware scan', 'antivirus') ?>
+					</th>
+					<td>
+						<div class="inside" id="av_manual_scan">
 							<p>
-								<a href="#" class="button rbutton"><?php esc_html_e('Scan the theme templates now', 'antivirus') ?></a>
+								<a href="#" class="button button-primary">
+									<?php esc_html_e('Scan the theme templates now', 'antivirus') ?>
+								</a>
 								<span class="alert"></span>
 							</p>
 							<div class="output"></div>
 						</div>
-					</div>
-				</div>
+					</td>
+				</tr>
+			</table>
+
+
+			<form method="post" action="">
+				<?php wp_nonce_field('antivirus') ?>
+
+				<table class="form-table">
+					<tr valign="top">
+						<th scope="row">
+							<?php esc_html_e('Daily malware scan', 'antivirus') ?>
+						</th>
+						<td>
+							<fieldset>
+								<label for="av_cronjob_enable">
+									<input type="checkbox" name="av_cronjob_enable" id="av_cronjob_enable" value="1" <?php checked(self::_get_option('cronjob_enable'), 1) ?> />
+									<?php esc_html_e('Check the theme templates for malware', 'antivirus') ?>
+								</label>
+
+								<p class="description">
+									<?php if ( $timestamp = wp_next_scheduled('antivirus_daily_cronjob') ) {
+										echo sprintf(
+											'%s: %s',
+											esc_html__('Next Run', 'antivirus'),
+											date_i18n('d.m.Y H:i:s', $timestamp + get_option('gmt_offset') * 3600)
+										);
+									} ?>
+								</p>
+
+
+								<br />
+
+
+								<label for="av_safe_browsing">
+									<input type="checkbox" name="av_safe_browsing" id="av_safe_browsing" value="1" <?php checked(self::_get_option('safe_browsing'), 1) ?> />
+									<?php esc_html_e('Malware detection by Google Safe Browsing', 'antivirus') ?>
+								</label>
+
+								<p class="description">
+									<?php esc_html_e('Diagnosis and notification in suspicion case', 'antivirus') ?>
+								</p>
+
+
+								<br />
+
+
+								<label for="av_notify_email">
+									<input type="text" name="av_notify_email" id="av_notify_email" value="<?php esc_attr_e(self::_get_option('notify_email')) ?>" class="regular-text" placeholder="<?php esc_attr_e('Email address for notifications', 'antivirus') ?>" />
+								</label>
+
+								<p class="description">
+									<?php esc_html_e('If the field is empty, the blog admin will be notified', 'antivirus') ?>
+								</p>
+							</fieldset>
+						</td>
+					</tr>
+
+					<tr valign="top">
+						<th scope="row">
+							<input type="submit" class="button button-primary" value="<?php _e('Save Changes') ?>" />
+						</th>
+						<td>
+							<?php if ( get_locale() == 'de_DE' ) { ?><a href="http://playground.ebiene.de/antivirus-wordpress-plugin/" target="_blank">Handbuch</a> &bull; <?php } ?><a href="https://flattr.com/t/1322865" target="_blank">Flattr</a> &bull; <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=ZAQUT9RLPW8QN" target="_blank">PayPal</a>
+						</td>
+					</tr>
+				</table>
 			</form>
 		</div>
 	<?php }
