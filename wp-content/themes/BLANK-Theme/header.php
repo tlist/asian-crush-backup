@@ -31,6 +31,8 @@
 	
 	<link rel="shortcut icon" href="/favicon.ico">
 	
+	<link rel="stylesheet" href="reset.css" type="stylesheet/css">
+	
 	<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>">
 	
 	<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>">
@@ -48,3 +50,5 @@
 			<h1><a href="<?php echo get_option('home'); ?>/"><?php bloginfo('name'); ?></a></h1>
 			<div class="description"><?php bloginfo('description'); ?></div>
 		</div>
+		
+		<?php include (TEMPLATEPATH . '/inc/nav.php' ); ?> 
