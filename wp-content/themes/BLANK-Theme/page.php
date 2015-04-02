@@ -1,29 +1,27 @@
-<?php get_header(); ?>
+<?php get_header() ?>
 
-	<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
-			
-		<div class="post" id="post-<?php the_ID(); ?>">
+	<?php echo PfBase::getBlock('blocks'.DS.'form_search_operator.php') ?>	
+	
+	<div class="main_content">
+		<h1><?php echo get_the_title(); ?></h1>
 
-			<h2><?php the_title(); ?></h2>
+<!--		
+		 <div class="breadcrumb">
+			<ul>
+		    	<li class="alone"><a href="#" class="active"><?php the_title(); ?> <span class="arrow"></span></a></li>
+		    </ul> 
+		</div> --> <!-- end breadcrumb --> 
 
-			<?php include (TEMPLATEPATH . '/inc/meta.php' ); ?>
-
-			<div class="entry">
-
-				<?php the_content(); ?>
-
-				<?php wp_link_pages(array('before' => 'Pages: ', 'next_or_number' => 'number')); ?>
-
-			</div>
-
-			<?php edit_post_link('Edit this entry.', '<p>', '</p>'); ?>
-
-		</div>
 		
-		<?php // comments_template(); ?>
+<?php 	
+$my_postid = $post->ID ;
+$content_post = get_post($my_postid);
+$content = $content_post->post_content;
+$content = apply_filters('the_content', $content);
+$content = str_replace(']]>', ']]>', $content);
+echo $content;
+?>    
+	    
+	</div>
 
-		<?php endwhile; endif; ?>
-
-<?php get_sidebar(); ?>
-
-<?php get_footer(); ?>
+<?php get_footer() ?>

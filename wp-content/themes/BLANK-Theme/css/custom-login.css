@@ -1,0 +1,15 @@
+#login {
+    margin: 4em auto 7em;
+    width: 320px;
+}
+#login h1:first-child { }
+h1 a {
+	bottom: 10px;
+    background: url("../_img/admin-login-amrlogo.png") no-repeat scroll center top transparent;
+    display: block;
+    height: 106px;
+    overflow: hidden;
+    padding-bottom: 15px;
+    text-indent: -9999px;
+    width: 326px;
+}
