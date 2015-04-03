@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Page NEWSFEED
+ * Template Name: Page Columns
  */
 global $wp_query;
 $page = isset($_GET['page']) ? $_GET['page'] : 1;

@@ -235,8 +235,8 @@ add_action( 'manage_newsfeed_posts_custom_column', 'amr_newsfeed_custom_column' 
   )); 
   
 //display contextual help for Newsfeed
-add_action( 'contextual_help', 'amr_add_help_text', 10, 3 );
-/*function amr_newsfeed_add_help_text($contextual_help, $screen_id, $screen) { 
+add_action( 'contextual_help', 'amr_newsfeed_add_help_text', 10, 3 );
+function amr_newsfeed_add_help_text($contextual_help, $screen_id, $screen) { 
   //$contextual_help .= var_dump($screen); // use this to help determine $screen->id
   if ('newsfeed' == $screen->id ) {
     $contextual_help =
@@ -258,4 +258,4 @@ add_action( 'contextual_help', 'amr_add_help_text', 10, 3 );
       '<p>' . __('This is the help screen displaying the table of newsfeeds blah blah blah.') . '</p>' ;
   }
   return $contextual_help;
-}*/
+}

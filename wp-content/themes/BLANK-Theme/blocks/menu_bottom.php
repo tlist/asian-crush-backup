@@ -5,7 +5,7 @@
             <li><a href="<?php echo site_url() ?>"><?php echo __('Home') ?></a></li>
             <li><a href="<?php echo site_url('movies') ?>"><?php echo __('Movies') ?></a></li>
 	    <li><a href="<?php echo site url('newsfeed') ?>"><?php echo _('Newsfeed') ?></a></li>
-	    <li><a href="<?php echo site url('COLUMNS') ?>"><?php echo _('Columns') ?></a></li>
+	    <li><a href="<?php echo site url('Columns') ?>"><?php echo _('Columns') ?></a></li>
             <li><a href="<?php echo site_url('anime') ?>"><?php echo __('Anime') ?></a></li>
             <li><a href="<?php echo site_url('sports') ?>"><?php echo __('Sports') ?></a></li>
             <li><a href="<?php echo site_url('watch-asian-crush') ?>"><?php echo __('Watch Asian Crush') ?></a></li>
