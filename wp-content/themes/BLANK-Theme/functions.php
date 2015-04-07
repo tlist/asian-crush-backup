@@ -861,6 +861,9 @@ include dirname( __FILE__ ) . '/includes/post_type_movie_custom.php';
 include dirname( __FILE__ ) . '/includes/post_type_newsfeed_register.php';
 include dirname( __FILE__ ) . '/includes/post_type_newsfeed_custom.php';
 
+include dirname( __FILE__ ) . '/includes/post_type_column_register.php';
+include dirname( __FILE__ ) . '/includes/post_type_column_custom.php'; 
+
 include dirname( __FILE__ ) . '/includes/post_type_movie_slideshow_register.php';
 include dirname( __FILE__ ) . '/includes/post_type_movie_slideshow_custom.php';
 // include dirname( __FILE__ ) . '/includes/post_type_dvd_store_register.php';

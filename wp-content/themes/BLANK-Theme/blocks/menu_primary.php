@@ -51,6 +51,77 @@ function amr_is_inside_main_movie_genre( $main_movie_genre_cat ) {
 		return false; //review
 	}
 }
+/* too do amr_is_inside_main_newsfeed_genre( $ main_newsfeed_genre_cat ) {} */
+
+/*
+function amr_is_inside_main_newsfeed_genre( $main_newsfeed_genre_cat ) {
+	if (is_page()){
+		if (is_page_template("page-movies.php") && $main_movie_genre_cat === _CATE_ID_MOVIES)
+			return true;
+		else if (is_page_template("page-anime.php") && $main_movie_genre_cat === _CATE_ID_ANIME)
+			return true;
+		else if (is_page_template("page-sports.php") && $main_movie_genre_cat === _CATE_ID_SPORTS)
+			return true;
+		return false;
+	}
+	else if (is_tax()){
+		if (is_tax('movie_genre', $main_movie_genre_cat)) // neu trang tax hien tai la ung voi li dang xet
+			return true;
+		return false;
+	}
+	else if (is_singular('movie')){
+		$the_movie_terms_arr = wp_get_object_terms(get_the_ID(), 'movie_genre'); //this will return many term, because we will find the top most term, we only need use first object of this arr
+		$the_movie_terms_with_level_arr = get_ancestors($the_movie_terms_arr[0]->term_id, $the_movie_terms_arr[0]->taxonomy);
+		$the_movie_terms_with_level_arr[] = $the_movie_terms_arr[0]->term_id;
+		/* so ugly code :(*/
+
+			if ( in_array(_CATE_ID_ANIME, $the_movie_terms_with_level_arr) && $main_movie_genre_cat === _CATE_ID_ANIME )
+				return true; // dont hoved movie in anime and sport in movie top navi
+			else if (in_array(_CATE_ID_SPORTS, $the_movie_terms_with_level_arr) && $main_movie_genre_cat === _CATE_ID_SPORTS)
+				return true;
+			else if ($main_movie_genre_cat === _CATE_ID_MOVIES && !in_array(_CATE_ID_SPORTS, $the_movie_terms_with_level_arr) && !in_array(_CATE_ID_ANIME, $the_movie_terms_with_level_arr))
+				return true;
+			else
+				return false;
+		return false; //review
+	}
+} */
+
+
+/*
+function amr_is_inside_main_columns_genre( $main_columns_genre_cat ) {
+	if (is_page()){
+		if (is_page_template("page-movies.php") && $main_movie_genre_cat === _CATE_ID_MOVIES)
+			return true;
+		else if (is_page_template("page-anime.php") && $main_movie_genre_cat === _CATE_ID_ANIME)
+			return true;
+		else if (is_page_template("page-sports.php") && $main_movie_genre_cat === _CATE_ID_SPORTS)
+			return true;
+		return false;
+	}
+	else if (is_tax()){
+		if (is_tax('movie_genre', $main_movie_genre_cat)) // neu trang tax hien tai la ung voi li dang xet
+			return true;
+		return false;
+	}
+	else if (is_singular('movie')){
+		$the_movie_terms_arr = wp_get_object_terms(get_the_ID(), 'movie_genre'); //this will return many term, because we will find the top most term, we only need use first object of this arr
+		$the_movie_terms_with_level_arr = get_ancestors($the_movie_terms_arr[0]->term_id, $the_movie_terms_arr[0]->taxonomy);
+		$the_movie_terms_with_level_arr[] = $the_movie_terms_arr[0]->term_id;
+		/* so ugly code :(*/
+
+			if ( in_array(_CATE_ID_ANIME, $the_movie_terms_with_level_arr) && $main_movie_genre_cat === _CATE_ID_ANIME )
+				return true; // dont hoved movie in anime and sport in movie top navi
+			else if (in_array(_CATE_ID_SPORTS, $the_movie_terms_with_level_arr) && $main_movie_genre_cat === _CATE_ID_SPORTS)
+				return true;
+			else if ($main_movie_genre_cat === _CATE_ID_MOVIES && !in_array(_CATE_ID_SPORTS, $the_movie_terms_with_level_arr) && !in_array(_CATE_ID_ANIME, $the_movie_terms_with_level_arr))
+				return true;
+			else
+				return false;
+		return false; //review
+	}
+} */
+
 
 ?>
 <div id="nav">

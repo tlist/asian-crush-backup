@@ -1,0 +1,283 @@
+.clearfix:after {content: ".";display: block;height: 0;clear: both;visibility: hidden;}
+.clearfix { display: inline-block; }
+* html .clearfix{height: 1%;}
+.clearfix{display: block; }
+.inlineBlock {display: -moz-inline-box;display: inline-block;}
+* html .inlineBlock {display: inline;height: 1%;}
+*:first-child+html.inlineBlock {display: inline;height: 1%;}
+strong {font-weight: bold;}
+
+.ie7 .main_content #searchbox_form { width: 60px;}
+.ie7 .breadcrumb a { padding-bottom: 2px;}
+.ie7 .breadcrumb li.alone a:hover span, .ie7 .breadcrumb li.alone a.active span { top: 30px;}
+.ie7 .breadcrumb_layer li.parent { position: relative; height: 24px; width: 90px;}
+.ie7 .breadcrumb_layer li.parent a { position: absolute; top: -3px; width: 70px; height: 24px;}
+.ie7 .breadcrumb_layer li.parent a span.arrow { position: absolute; left: 90px; top: 0px;}
+
+body { min-width: 1000px;}
+
+
+.slide_thumbs {}
+	.slide_thumbs ul li { float: left; margin-right: 0;}
+	.slide_thumbs li img { width: 62px; height: 46px; margin-right: 2px;}
+	
+.homeslideshow {color: #fff;}
+	.homeslideshow > ul > li { position: absolute; display: none; }	
+	.homeslideshow > ul > li.active { display: block; }		
+	.homeslideshow .cls-field-images {  }	
+	.homeslideshow .cls-field-images img { width: 896px; }	
+	.homeslideshow .group { position: absolute; width: 262px; height: 400px; background: rgba(0,0,0, .56) none; right: 0; top: 0; padding-top: 27px;}	
+	.homeslideshow .group .cls-field-cate { font-family: 'Abel', sans-serif; font-size: 17px; padding: 7px 8px; background: #000; display: inline-block; margin-bottom: 27px;}	
+	.homeslideshow .group .cls-field-title { font-size: 25px; font-weight: bold; text-transform: uppercase; text-align: center; margin-bottom: 15px; }	
+	.homeslideshow .group .cls-field-meta-plot { width: 173px; margin: 0 auto; font-size: 12px; line-height: 16px; }	
+	.homeslideshow .group .cls-field-view-more { width: 173px; margin: 0 auto; font-size: 12px; line-height: 16px; }	
+	.homeslideshow .group .cls-field-view-more a { text-decoration: underline;}
+	
+	
+		
+.movie_list .cls-post-listing { margin-top: 20px; font-size: 12px; line-break: 16px;}			
+.movie_list .cls-post-listing a { color: #000; text-decoration: none;}	
+
+.movie_list .cls-post-listing a:hover { color: #f90;}			
+	.movie_list .cls-post-listing ul li { width: 100px; float: left; padding: 0 54px 0 0; overflow: hidden;}			
+	.movie_list .cls-post-listing ul li .cls-field-image { margin-bottom: 6px;}		
+	.movie_list .cls-post-listing ul li .cls-field-image img  { width: 100px; height: 140px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); margin-top: 5px;}			
+	.movie_list .cls-post-listing ul li .cls-field-title  { text-align: center;}			
+	.movie_list .cls-post-listing ul li .group1  { position: relative;}			
+	.movie_list .cls-post-listing ul li .group1 .cls-field-watch-online  { position: absolute; bottom: 8px; left: 0;}			
+	.movie_list .cls-post-listing ul li .group1 .cls-field-watch-online a  { display: block; text-indent: -9999px; width: 30px; height: 32px; background: url('../_img/icon_online.png') no-repeat transparent;}			
+	
+
+.ie7 .movie_grid li { min-height: 230px;}
+	.movie_grid li.cls-first-in-line { clear: left;}
+	.movie_grid li.cls-last-in-line { margin-right: 0; clear: right; padding-right: 0;}
+	.movie_grid li.cls-only-in-line { clear: left;}
+	.movie_grid li img { width: 100px; height: 140px;}
+	.movie_grid li .cls-field-title  { text-align: center; margin-top: 6px; margin-bottom: 4px;}
+	.movie_grid .cls-post-listing ul li .group1  { position: relative;}			
+	.movie_grid .cls-post-listing ul li .group1 .cls-field-watch-online  { position: absolute; bottom: 4px; left: 0;}			
+	.movie_grid .cls-post-listing ul li .group1 .cls-field-watch-online a  { display: block; text-indent: -9999px; width: 30px; height: 32px; background: url('../_img/icon_online.png') no-repeat transparent;}
+.page-template .main_content .cls-post-listing, .tax-movie_genre .main_content .cls-post-listing{ margin-left: 5px;}
+
+.ie7 .page-template .main_content .cls-post-listing { clear: both;}	
+.ie7 .movie_grid li { }		
+
+	
+.movie_profile .cls-featured-image img { width: 220px !important; height: auto !important;}
+.still_slide img { width: 478px; height: 319px;}			
+				
+/* search page */
+.cls-movie-grid { padding:  0 0 } 
+.cls-search-page {}
+.cls-search-page .cls-post-listing ul {margin-bottom: 0px; margin-top: 0px;}
+.cls-search-page .cls-post-listing ul li { width: 100%; border-top: 1px solid #E3E2E2; padding-top: 22px; margin-bottom: 27px; padding-left: 0; text-indent: 0}
+.cls-search-page .cls-post-listing li.cls-item-no0 { border-top: 0;}
+	.cls-search-page .cls-post-listing li img { width: 100px; height:140px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);}
+	.cls-search-page .cls-post-listing li span { display: inline; text-align: left;}
+	.cls-search-page .cls-post-listing li .group1 { width: 100px; float: left; }
+	.cls-search-page .cls-post-listing li .group2 { margin-left: 122px; margin-top: -9px;}
+	.cls-search-page .cls-post-listing li .cls-field-title { text-align: left; font-size: 18px; margin-bottom: 3px;}
+	.cls-search-page .cls-post-listing li .cls-field-cate-genre { text-align: left; font-size: 14px; margin-bottom: 13px; font-weight: bold;}
+	.cls-search-page .cls-post-listing li .cls-field-meta-duration { background: url("../_img/icon_clock.jpg") no-repeat scroll 0 0 transparent; padding-left: 20px; font-size: 10px; line-height: 20px; margin-bottom: 10px; height: 20px;}
+	.cls-search-page .cls-post-listing li .cls-field-cate-director { margin-bottom: 3px; }
+	.cls-search-page .cls-post-listing li .cls-field-cate-director .cls-item-caption { float: left; width: 100px; font-size: 12px; font-weight: bold; line-height: 17px;}
+	.cls-search-page .cls-post-listing li .cls-field-cate-director .cls-item-value { margin-left: 100px; }
+	.cls-search-page .cls-post-listing li .cls-field-cate-starring	{margin-bottom: 3px;}
+	.cls-search-page .cls-post-listing li .cls-field-cate-starring .cls-item-caption { float: left; width: 100px; font-size: 12px; font-weight: bold; line-height: 17px;}
+	.cls-search-page .cls-post-listing li .cls-field-cate-starring .cls-item-value { margin-left: 100px; }
+	.cls-search-page .cls-post-listing li .cls-field-meta-plot { margin-bottom: 3px; }
+	.cls-search-page .cls-post-listing li .cls-field-meta-plot .cls-item-caption { font-size: 12px; font-weight: bold; line-height: 17px; }
+	.cls-search-page .cls-post-listing li .cls-field-meta-plot .cls-item-value { font-size: 12px; line-height: 17px; }
+	.cls-search-page .movie_grid .cls-post-listing ul li .group1 .cls-field-watch-online { bottom: 3px;}
+	.cls-search-page .pagination { margin: 6px 0;}
+	
+	
+.search_results { padding: 39px 29px;} 	
+/* /search page */		
+
+.cls-where-to-watch { padding-top: 6px;}
+.home .wrapper .cls-post-listing, .page-template-page-popular-titles-php .wrapper .cls-post-listing { width: 884px; overflow: hidden;}
+.home .wrapper .movie_list .cls-post-listing ul li .group1 .cls-field-watch-online, .page-template-page-popular-titles-php .wrapper .movie_list .cls-post-listing ul li .group1 .cls-field-watch-online { bottom: 9px;}
+.home .main_content .cls-post-listing { margin-left: 12px; }	
+.home .main_content .cls-post-listing > ul { width: 1100px;}
+.home .movie_list h2 {margin-left: 10px;}
+
+.movie_profile .movie_stills .movie_images { padding: 7px 21px;}
+.movie_profile .movie_stills .still_slide { width: 480px;}
+.movie_profile .movie_stills .still_slide img { width: 480px;}
+.movie_profile .movie_stills .still_button a#still_left { left: 16px;}
+.movie_profile .movie_stills .still_button a#still_right { right: 16px;}
+.movie_profile .movie_stills .still_thumbs { width: 384px; margin: 7px auto 0; text-align: center;}
+.movie_profile .movie_stills .still_thumbs li { float: none; margin: 1px 2px;}
+
+.similar_list { margin-left: 22px;}
+.similar_list .movie_list .cls-post-listing ul li { padding-right: 50px;}
+
+.popular_title .movie_title { width: 100px;}
+.popular_titles .movie_title img { width: 100px; height: 140px;}
+.popular_titles .movie_desc { margin-left: 0px; width: 132px;}
+
+.page-template .cls-search-page .cls-post-listing { margin-left: 0;}
+
+.addthis_toolbox { min-width: 315px; text-align: right;}
+.addthis_toolbox .addthis_button_facebook_like { margin-right: 12px; }
+.addthis_toolbox .addthis_button_tweet { margin-right: -9px; }
+.addthis_toolbox .addthis_button_google_plusone { margin-right: -24px; }
+
+.page-template-default .cls-field-content { padding-bottom: 110px;}
+
+.breadcrumb_layer li.child1 a {padding-top: 1px; padding-bottom: 1px;}
+.breadcrumb_layer li.child1 a.active span { top: 24px;}
+
+.movie_profile .left a.buy { margin-top: 0; margin-bottom: 10px;}
+.movie_profile .left a.watch { margin-bottom: 10px; margin-top: 0; padding-bottom: 10px;}
+.movie_profile .left .cls-featured-image { margin-bottom: 8px;}
+
+
+
+/* Pagination */
+
+/*
+.cls-movie-grid-relative{
+	position: relative;
+}
+
+	.cls-movie-grid-relative .cls-pagination-top {
+		position: absolute;
+		top:	40px;
+		right: 10px;
+	}
+	
+	.cls-movie-grid-relative .cls-pagination-bottom {
+		position: absolute;
+		right: 10px;
+		bottom: 40px;
+	}
+*/
+
+	.cls-pagination-top,
+	.cls-pagination-bottom {
+		float: right;
+		display: block;
+		margin: 0 0 10px;	
+	}
+
+	.pagination > em {
+		padding-right: 4px;
+	}
+
+	.pagination .page-numbers {
+		color: #807f7f;
+		text-decoration: none;
+		text-align: center;
+		border: 1px solid #dad9d9;
+		padding: 0 3px;
+	}
+	.pagination a.page-numbers:hover , .pagination span.page-numbers.current {
+		border: 1px solid #3a3a3a;
+		color: #3a3a3a;
+		text-decoration: none;
+	}
+
+/* DVD STORE see you soon message*/
+
+.columns .see-you-soon {
+	background: none repeat scroll 0 0 #F5F5F5;
+    border: 1px solid #C4C3C3;
+    float: left;
+    padding: 118px 31px;
+    width: 505px;
+    text-align: center;
+}
+
+/* DVD STORE */
+
+
+/* Pagination for dvd store */
+
+.cls-dvd-store {
+	position: relative;
+}
+
+	.cls-dvd-store .cls-pagination-top {
+		position: absolute;
+		top:	15px;
+		right: 15px;
+	}
+
+	.cls-dvd-store .cls-pagination-bottom {
+		position: absolute;
+		right: 15px;
+		bottom: 15px;		
+	}
+
+/* Pagination for dvd store */
+
+
+/* SIMILAR BLOCK*/
+.similar_list .movie_list .cls-post-listing ul li.cls-last-in-line {
+    margin-right: 0; clear: right; padding-right: 0;
+}
+/* SIMILAR BLOCK*/
+
+/*JOIN OUT MAIL LIST PAGE*/
+.cls-join-our-mail {
+	position: relative;
+}
+.cls-join-our-mail .cls-join-mail-submit {
+	position: absolute;
+	right: 282px;
+	bottom: 10px;
+}
+
+.cls-join-our-mail form {
+	width: 400px !important;
+}
+
+/*FOR ERROR MESSAGE*/
+
+#contact_form label.error {
+    color: red;
+    display: none;
+    font-size: 10px;
+    font-style: italic;
+    left: 200px;
+    position: absolute;
+    top: 4px;
+    display: inline;
+}
+
+#contact_form textarea + label.error {
+    left: 0;
+    top: 100%;
+}
+
+/*FOR ERROR MESSAGE*/
+
+/*JOIN OUT MAIL LIST PAGE*/
+
+
+.popular_title .movie_desc p.title {width: 134px;}
+.popular_title .movie_desc p.title a {color: #5e5e5e;}
+.ie7 .still_slide { height: 320px;}
+.ie7 .movie_profile .movie_stills .still_thumbs li { float: left;}
+.ie7 .movie_profile .movie_stills .still_thumbs li a img, .ie8 .movie_profile .movie_stills .still_thumbs li a img{ filter: alpha(opacity = 50); }
+.ie7 .movie_profile .movie_stills .still_thumbs li.active a img, .ie8 .movie_profile .movie_stills .still_thumbs li.active a img{ filter: alpha(opacity = 100); }
+
+.ie7 .alphabet li { float: left; margin: 0 2px 2px 0; z-index: 1;}
+.ie7 .alphabet { position: relative; z-index: 1;}
+.ie7 #map_selection { position: relative; z-index: 1;}
+
+
+.cls-find-asian-crush .cls-inner { padding: 16px 110px 0 415px; font-size: 15px; color: #fff; text-align: center; line-height: 19px;}
+
+
+.cls-cate-operator .cls-inner { padding: 8px 48px; color: #fff;}
+.cls-cate-operator .cls-cate-title { font-size: 14px; display: inline;}
+.cls-cate-operator .cls-cate-desc { font-size: 12px; display: inline;}
+.cls-cate-operator .cls-cate-sep { font-size: 16px; display: inline; margin: 0 26px;}
+
+.pagination li {width: auto; padding: 0; overflow: visible;}
+.pagination .wp-paginate a {border: 1px solid #DAD9D9; color: #807F7F; background: 0;}
+.pagination .wp-paginate a:hover { border: 1px solid #3A3A3A; background: none; color: #3A3A3A;}
+.pagination .wp-paginate .current {padding: 3px 6px; border: 1px solid #3A3A3A; background: none; color: #3A3A3A; display: inline;}
