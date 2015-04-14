@@ -12,3 +12,9 @@
 	width:$width; margin: $margin;
 	opacity: $opacity;
 }
+
+@mixin flexiwrap ($width, $max, $min) {
+	width: $width;
+	max-width: $max;
+	min-width: $min;
+}

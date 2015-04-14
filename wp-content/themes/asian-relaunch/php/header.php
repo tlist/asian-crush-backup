@@ -1,7 +1,6 @@
 
 	<div id="logochunk">
-		<!-- <img src="assets/images/ac-logo.png"  /> -->
-		<img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ac-logo.png" alt="<?php bloginfo('name'); ?>" />
+		<img src="<?php echo PfBase::app()->themeUrl; ?>/_assets/images/ac-logo.png"  />
 	</div>
 	<div id="headerstuffchunk">
 		<div id="login-signup" class="chunkpiece grid-3-14 button">
@@ -10,21 +9,16 @@
 		<div id="sm-links" class="chunkpiece grid-2-14">
 			<span>
 				<div id="insta" class="sm-link smicon">
-					<!-- <img src="assets/images/ic_facebook.png"  /> -->
-					<img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ic_facebook.png" alt="<?php bloginfo('name'); ?>" />
+					<img src="<?php echo PfBase::app()->themeUrl; ?>/_assets/images/ic_facebook.png"  />
 				</div>
 				<div id="dribble" class="sm-link smicon">
-					<!-- <img src="assets/images/ic_twitter.png"  /> -->
-					<img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ic_twitter.png" alt="<?php bloginfo('name'); ?>" />
+					<img src="<?php echo PfBase::app()->themeUrl; ?>/_assets/images/ic_twitter.png"  />
 				</div>
 				<div id="twitter" class="sm-link smicon">
-					<!-- <img src="assets/images/ic_facebook.png"  /> -->
-					<img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ic_facebook.png" alt="<?php bloginfo('name'); ?>" />
+					<img src="<?php echo PfBase::app()->themeUrl; ?>/_assets/images/ic_facebook.png"  />
 				</div>
 				<div id="facebook" class="sm-link smicon">
-					<!-- <img src="assets/images/ic_twitter.png"  /> -->
-					<img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ic_twitter.png" alt="<?php bloginfo('name'); ?>" />
-					
+					<img src="<?php echo PfBase::app()->themeUrl; ?>/_assets/images/ic_twitter.png"  />
 				</div>	
 			</span>
 		</div>

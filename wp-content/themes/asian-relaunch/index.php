@@ -18,7 +18,7 @@
 		<?php include 'php/header.php' ?>
 	</div>
 
-	<div id="masthead">
+	<div id="container">
 		<?php include 'php/masthead.php' ?>
 	</div>
 

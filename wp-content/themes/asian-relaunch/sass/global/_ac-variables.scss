@@ -24,43 +24,33 @@
 			$logochunk: 20%;
 			$headerstuffchunk: 66%;
 	//masthead
-		$mastheadheight: 550px;
-	//pagebody
+		$mastheadheight: 450px;
 
 	//footer
 		$footerheight:400px;
 
 
-//Text & Font
-
-
-
-
-//Icons and Buttons
-//	$ac-logo: $images + "ac-logo.png";
-
 
 // Style for Wrapper
-	$bodywidth: 1040px;
+	$bodywidth: 1080px;
 	$mcentered: 0 auto;
 	$outergutter: 40px;
 	$innergutter: 60px;
 
 
-
 // Style for tiles
 	$tilewidth: $bodywidth/3;
-	$tileheight: $tilewidth/.6;
-	$tilemargin: 2% 0;
+	$tileheight: $tilewidth/.75;
+	$tilemargin: 1% 0;
 	//tag	
 		$tiletagheight:$tileheight*.04;
 	//image		
 		$tileimageheight:$tileheight*.37;
 	//headline
-		$headlinefontfamily: Arial, Helvetica, sans-serif;
-		$tileheadlineheight:$tileheight*.13;
-		$tileheadlinefontsize: 1.9*$basefontsize;
-		$tileheadlinelineheight:1.4*$baselineheight;
+	//	$headlinefontfamily: Arial, Helvetica, sans-serif;
+	//	$tileheadlineheight:$tileheight*.13;
+	//	$tileheadlinefontsize: 1.9*$basefontsize;
+	//	$tileheadlinelineheight:1.4*$baselineheight;
 
 	//tilefoot	
 		//author
@@ -68,4 +58,3 @@
 			$tileauthorfontsize: .9*$basefontsize;
 
 	$tilefontcolor: #34363f;
-

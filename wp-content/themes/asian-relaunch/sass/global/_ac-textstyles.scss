@@ -5,7 +5,7 @@ $akzitesk-EX: "../assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf";
 $akzitesk-super: "../assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf";
 $akzitesk-bold: "../assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf";
 $avantgarde-demi: "../assets/fonts/ufonts.com_avantgarde-demi-opentype.otf";
-$avantgarde-book: "../assets/fonts/ufonts.com_avantgarde-book.ttf";
+$tradegothic-light: "../assets/fonts/trade-gothic-lt-1361519976.ttf";
 
 //Sizing
 $basefontsize: 14px;
@@ -13,15 +13,15 @@ $baselineheight: 18px;
 $baseletterspacing: .05em;
 
 //Styles
-//overlayfont ---> $avantgarde-book;
+//framemetafont ---> $avantgarde-book;
 		@font-face {
-		    font-family: overlayfont;
-		    src: url($avantgarde-book);
+		    font-family: framemetafont;
+		    src: url($tradegothic-light);
 		}
 
-//navlinkfont ---> $avantgarde-demi;
+//navishlinkfont ---> $avantgarde-demi;
 		@font-face {
-		    font-family: navlinkfont;
+		    font-family: navishlinkfont;
 		    src: url($avantgarde-demi);
 		}
 
@@ -63,13 +63,13 @@ $fontfamily: Arial, Helvetica, sans-serif;
 
 //Font Classes
 
-.overlayfont {
-	font-family: overlayfont;
-	font-size: .66rem; line-height:1.1rem; letter-spacing: .02rem;
+.framemetafont {
+	font-family: framemetafont;
+	font-size: 1rem; line-height:1.1rem; letter-spacing: .03rem;
 }
 
-.navlinkfont {
-	font-family: navlinkfont;
+.navishlinkfont {
+	font-family: navishlinkfont;
 	font-size: .66rem; line-height:1.1rem; letter-spacing: .02rem;
 }
 
@@ -85,13 +85,13 @@ $fontfamily: Arial, Helvetica, sans-serif;
 
 .tileheadfont {
 	font-family: tileheadfont;
-	font-size: .85rem; line-height:1.1rem; letter-spacing: .02rem;
+	font-size: .85rem; line-height:1.1rem; letter-spacing: .05rem;
 }
 
 .footcolhead {
 	font-family: footcolheadfont;
 	margin-bottom: 2em;
-	font-size: 1.2rem; line-height:.7rem; letter-spacing: .2rem;
+	font-size: 1.1rem; line-height:.7rem; letter-spacing: .2rem;
 }
 
 .footcolitem {

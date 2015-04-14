@@ -1,32 +1,32 @@
 @font-face {
-  font-family: overlayfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-book.ttf"); }
+  font-family: framemetafont;
+  src: url("../__assets/fonts/trade-gothic-lt-1361519976.ttf"); }
 @font-face {
-  font-family: navlinkfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
+  font-family: navishlinkfont;
+  src: url("../__assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
 @font-face {
   font-family: headlinefont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
 @font-face {
   font-family: splashtextfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
 @font-face {
   font-family: tileheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
 @font-face {
   font-family: footcolheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
 @font-face {
   font-family: footcolitemfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
-.overlayfont {
-  font-family: overlayfont;
-  font-size: .66rem;
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
+.framemetafont {
+  font-family: framemetafont;
+  font-size: 1rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .03rem; }
 
-.navlinkfont, #tabrow, #headerstuffchunk, #footfoot {
-  font-family: navlinkfont;
+.navishlinkfont, #tabrow, #headerstuffchunk, #footfoot {
+  font-family: navishlinkfont;
   font-size: .66rem;
   line-height: 1.1rem;
   letter-spacing: .02rem; }
@@ -47,12 +47,12 @@
   font-family: tileheadfont;
   font-size: .85rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .05rem; }
 
 .footcolhead {
   font-family: footcolheadfont;
   margin-bottom: 2em;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: .7rem;
   letter-spacing: .2rem; }
 
@@ -63,34 +63,34 @@
   letter-spacing: auto; }
 
 @font-face {
-  font-family: overlayfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-book.ttf"); }
+  font-family: framemetafont;
+  src: url("../__assets/fonts/trade-gothic-lt-1361519976.ttf"); }
 @font-face {
-  font-family: navlinkfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
+  font-family: navishlinkfont;
+  src: url("../__assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
 @font-face {
   font-family: headlinefont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
 @font-face {
   font-family: splashtextfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
 @font-face {
   font-family: tileheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
 @font-face {
   font-family: footcolheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
+  src: url("../__assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
 @font-face {
   font-family: footcolitemfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
-.overlayfont {
-  font-family: overlayfont;
-  font-size: .66rem;
+  src: url("../___assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
+.framemetafont {
+  font-family: framemetafont;
+  font-size: 1rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .03rem; }
 
-.navlinkfont, #tabrow, #headerstuffchunk, #footfoot {
-  font-family: navlinkfont;
+.navishlinkfont, #tabrow, #headerstuffchunk, #footfoot {
+  font-family: navishlinkfont;
   font-size: .66rem;
   line-height: 1.1rem;
   letter-spacing: .02rem; }
@@ -111,12 +111,12 @@
   font-family: tileheadfont;
   font-size: .85rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .05rem; }
 
 .footcolhead {
   font-family: footcolheadfont;
   margin-bottom: 2em;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: .7rem;
   letter-spacing: .2rem; }
 
@@ -135,7 +135,7 @@ html {
 
 body {
   width: 100%;
-  min-width: 1060px;
+  min-width: 1080px;
   height: 100%;
   margin: 0;
   padding: 0;
@@ -149,16 +149,16 @@ body {
   margin-left: 10%;
   height: 45%;
   min-height: 1em;
-  -moz-border-radius: 5% / 50%;
-  -webkit-border-radius: 5% / 50%;
-  border-radius: 5% / 50%;
+  -moz-border-radius: 3% / 25%;
+  -webkit-border-radius: 3% / 25%;
+  border-radius: 3% / 25%;
   background: #fff; }
 
 textarea {
-  width: 90%;
+  width: 95%;
   float: right;
-  margin-top: 2%;
-  padding-bottom: 2%;
+  margin-top: 2.5%;
+  padding-bottom: 2.5%;
   border: none;
   border-style: none;
   resize: none;
@@ -167,7 +167,7 @@ textarea {
   overflow-x: auto;
   overflow-y: hidden; }
 
-#tabrow .nav {
+#tabrow .navish {
   font-size: 120%; }
 
 .tile .readmore {
@@ -189,8 +189,8 @@ textarea {
     height: inherit;
     float: left; }
     #header #logochunk img {
-      width: 78%;
-      margin: 4% 8% 4% 8%; }
+      width: 65%;
+      margin: 4% 11% 4% 11%; }
   #header #headerstuffchunk {
     width: 66%;
     height: inherit;
@@ -225,40 +225,65 @@ textarea {
       position: relative;
       width: 35.71429%; }
 
-#masthead {
+#container {
   position: relative;
-  height: 550px;
+  height: 450px;
   overflow: hidden; }
 
+#carousel {
+  height: 100%;
+  position: relative; }
+  #carousel .item {
+    display: inline-block;
+    position: relative;
+    height: 100%; }
+
+.carouselnavig, #carouselprev, #carouselnext {
+  display: block;
+  position: absolute;
+  background: #f05A29;
+  border-radius: 35% / 75%;
+  height: 15%;
+  width: 45px;
+  margin-top: 90%;
+  padding: 5% 5% 0 0; }
+
+#carouselprev {
+  margin-left: 50px; }
+
+#carouselnext {
+  right: 0;
+  margin-right: 50px; }
+
 @font-face {
-  font-family: overlayfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-book.ttf"); }
+  font-family: framemetafont;
+  src: url("../_assets/fonts/trade-gothic-lt-1361519976.ttf"); }
 @font-face {
-  font-family: navlinkfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
+  font-family: navishlinkfont;
+  src: url("../_assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
 @font-face {
   font-family: headlinefont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
 @font-face {
   font-family: splashtextfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
 @font-face {
   font-family: tileheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
 @font-face {
   font-family: footcolheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
 @font-face {
   font-family: footcolitemfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
-.overlayfont {
-  font-family: overlayfont;
-  font-size: .66rem;
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
+.framemetafont {
+  font-family: framemetafont;
+  font-size: 1rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .03rem; }
 
-.navlinkfont, #tabrow, #headerstuffchunk, #footfoot {
-  font-family: navlinkfont;
+.navishlinkfont, #tabrow, #headerstuffchunk, #footfoot {
+  font-family: navishlinkfont;
   font-size: .66rem;
   line-height: 1.1rem;
   letter-spacing: .02rem; }
@@ -279,12 +304,12 @@ textarea {
   font-family: tileheadfont;
   font-size: .85rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .05rem; }
 
 .footcolhead {
   font-family: footcolheadfont;
   margin-bottom: 2em;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: .7rem;
   letter-spacing: .2rem; }
 
@@ -295,34 +320,34 @@ textarea {
   letter-spacing: auto; }
 
 @font-face {
-  font-family: overlayfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-book.ttf"); }
+  font-family: framemetafont;
+  src: url("../_assets/fonts/trade-gothic-lt-1361519976.ttf"); }
 @font-face {
-  font-family: navlinkfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
+  font-family: navishlinkfont;
+  src: url("../_assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
 @font-face {
   font-family: headlinefont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
 @font-face {
   font-family: splashtextfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
 @font-face {
   font-family: tileheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
 @font-face {
   font-family: footcolheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
 @font-face {
   font-family: footcolitemfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
-.overlayfont {
-  font-family: overlayfont;
-  font-size: .66rem;
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
+.framemetafont {
+  font-family: framemetafont;
+  font-size: 1rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .03rem; }
 
-.navlinkfont, #tabrow, #headerstuffchunk, #footfoot {
-  font-family: navlinkfont;
+.navishlinkfont, #tabrow, #headerstuffchunk, #footfoot {
+  font-family: navishlinkfont;
   font-size: .66rem;
   line-height: 1.1rem;
   letter-spacing: .02rem; }
@@ -343,12 +368,12 @@ textarea {
   font-family: tileheadfont;
   font-size: .85rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .05rem; }
 
 .footcolhead {
   font-family: footcolheadfont;
   margin-bottom: 2em;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: .7rem;
   letter-spacing: .2rem; }
 
@@ -359,31 +384,54 @@ textarea {
   letter-spacing: auto; }
 
 .mastframe {
-  position: relative; }
+  position: relative;
+  overflow: hidden;
+  min-width: 100%;
+  min-height: 450px;
+  height: inherit; }
   .mastframe img {
     position: absolute;
-    width: 100%; }
-  .mastframe #overlay-matte {
-    position: absolute;
-    height: 57%;
-    width: 30%;
-    right: 0;
-    background: purple; }
-  .mastframe #overlay-text {
-    position: absolute;
-    width: inherit;
-    height: inherit;
-    background: purple; }
+    min-width: 100%; }
+
+.framemeta {
+  position: relative;
+  box-style: border-box;
+  margin-top: 6%;
+  padding: 18px 0 35px 15px;
+  width: 30%;
+  float: right;
+  color: white;
+  background: #898991;
+  /* Fall-back for browsers that don't support rgba */
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2; }
+  .framemeta .genre {
+    background: black;
+    font-size: 1.25em;
+    font-weight: 600;
+    padding: 4px; }
+  .framemeta .synopsis {
+    display: inline-block;
+    font-size: .75em;
+    max-width: 60%; }
+  .framemeta .title {
+    display: inline-block;
+    max-width: 10%;
+    font-size: 1.3em;
+    line-height: 1em; }
 
 #pagebody {
   position: relative;
   background: #f3f3f3; }
+  #pagebody #tabrow, #pagebody #tilewrapper {
+    width: 100%;
+    max-width: 1080px;
+    min-width: 444px; }
   #pagebody #tabrow {
     position: relative;
-    width: 1040px;
-    margin: 0 auto;
-    padding: 5% 0 0; }
-    #pagebody #tabrow .nav {
+    padding-top: 3.5%;
+    margin: 0 auto; }
+    #pagebody #tabrow .navish {
       position: relative;
       margin: 0 4px 0 0;
       padding: 1px 8px;
@@ -392,7 +440,7 @@ textarea {
       bottom: 0px;
       background: #f7a388;
       color: white; }
-      #pagebody #tabrow .nav:hover {
+      #pagebody #tabrow .navish:hover {
         background: #f05A29; }
     #pagebody #tabrow .selected {
       background: #f05A29; }
@@ -404,20 +452,18 @@ textarea {
     opacity: 0.27; }
   #pagebody #tilewrapper {
     position: relative;
-    width: 1040px;
     background: #fff;
-    margin: 0 auto 25px;
-    padding: 0 3%;
-    letter-spacing: -5px; }
+    letter-spacing: -5px;
+    margin: 0 auto 25px; }
     #pagebody #tilewrapper .tile {
       box-sizing: border-box;
       letter-spacing: .08em;
       position: relative;
       display: inline-block;
-      width: 346.66667px;
-      height: 577.77778px;
+      width: 360px;
+      height: 480px;
       padding: 1% 3% .8%;
-      margin: 2% 0;
+      margin: 1% 0;
       overflow: hidden; }
       #pagebody #tilewrapper .tile .tag {
         background: #f7a388;
@@ -434,7 +480,7 @@ textarea {
         position: relative;
         display: block;
         width: 100%;
-        height: 213.77778px; }
+        height: 177.6px; }
         #pagebody #tilewrapper .tile .image img {
           position: relative;
           width: inherit;
@@ -469,34 +515,34 @@ textarea {
           left: 0px; }
 
 @font-face {
-  font-family: overlayfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-book.ttf"); }
+  font-family: framemetafont;
+  src: url("../_assets/fonts/trade-gothic-lt-1361519976.ttf"); }
 @font-face {
-  font-family: navlinkfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
+  font-family: navishlinkfont;
+  src: url("../_assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
 @font-face {
   font-family: headlinefont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
 @font-face {
   font-family: splashtextfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
 @font-face {
   font-family: tileheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
 @font-face {
   font-family: footcolheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
 @font-face {
   font-family: footcolitemfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
-.overlayfont {
-  font-family: overlayfont;
-  font-size: .66rem;
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
+.framemetafont {
+  font-family: framemetafont;
+  font-size: 1rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .03rem; }
 
-.navlinkfont, #tabrow, #headerstuffchunk, #footfoot {
-  font-family: navlinkfont;
+.navishlinkfont, #tabrow, #headerstuffchunk, #footfoot {
+  font-family: navishlinkfont;
   font-size: .66rem;
   line-height: 1.1rem;
   letter-spacing: .02rem; }
@@ -517,12 +563,12 @@ textarea {
   font-family: tileheadfont;
   font-size: .85rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .05rem; }
 
 .footcolhead {
   font-family: footcolheadfont;
   margin-bottom: 2em;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: .7rem;
   letter-spacing: .2rem; }
 
@@ -533,34 +579,34 @@ textarea {
   letter-spacing: auto; }
 
 @font-face {
-  font-family: overlayfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-book.ttf"); }
+  font-family: framemetafont;
+  src: url("../_assets/fonts/trade-gothic-lt-1361519976.ttf"); }
 @font-face {
-  font-family: navlinkfont;
-  src: url("../assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
+  font-family: navishlinkfont;
+  src: url("../_assets/fonts/ufonts.com_avantgarde-demi-opentype.otf"); }
 @font-face {
   font-family: headlinefont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Bold-Extended_2808.ttf"); }
 @font-face {
   font-family: splashtextfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Super_2842.ttf"); }
 @font-face {
   font-family: tileheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Regular_2840.ttf"); }
 @font-face {
   font-family: footcolheadfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Extended_2814.ttf"); }
 @font-face {
   font-family: footcolitemfont;
-  src: url("../assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
-.overlayfont {
-  font-family: overlayfont;
-  font-size: .66rem;
+  src: url("../_assets/fonts/Akzidenz-Grotesk-BQ-Light_2831.ttf"); }
+.framemetafont {
+  font-family: framemetafont;
+  font-size: 1rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .03rem; }
 
-.navlinkfont, #tabrow, #headerstuffchunk, #footfoot {
-  font-family: navlinkfont;
+.navishlinkfont, #tabrow, #headerstuffchunk, #footfoot {
+  font-family: navishlinkfont;
   font-size: .66rem;
   line-height: 1.1rem;
   letter-spacing: .02rem; }
@@ -581,12 +627,12 @@ textarea {
   font-family: tileheadfont;
   font-size: .85rem;
   line-height: 1.1rem;
-  letter-spacing: .02rem; }
+  letter-spacing: .05rem; }
 
 .footcolhead {
   font-family: footcolheadfont;
   margin-bottom: 2em;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: .7rem;
   letter-spacing: .2rem; }
 

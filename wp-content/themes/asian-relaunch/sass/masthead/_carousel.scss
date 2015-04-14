@@ -7,5 +7,31 @@
 //@import 'global/ac-lib';
 
 #carousel{
+	height:100%; position:relative;
 
+	.item{display:inline-block;position:relative;height:100%;}
+
+}
+
+
+$carousel-sidemarg:50px;
+
+.carouselnavig {
+	display:block;
+	position: absolute; 
+	background:$secondary-color;
+	border-radius:35% / 75%;
+	height:15%; width: 45px;
+	margin-top:90%; padding: 5% 5% 0 0;
+}
+
+#carouselprev {
+	@extend .carouselnavig;
+	margin-left:$carousel-sidemarg;
+}
+
+#carouselnext {
+	@extend .carouselnavig;
+	right:0;
+	margin-right:$carousel-sidemarg;
 }

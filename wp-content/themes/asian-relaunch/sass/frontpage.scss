@@ -6,7 +6,7 @@
 
 html { width: 100%; height: 100%; }
 body {
-	width: 100%; min-width: 1060px;
+	width: 100%; min-width: 1080px;
 	height: 100%;
 	margin: 0; padding: 0; border: 0;
 	background: $htmlbackground; color: $primary-color;
@@ -17,17 +17,17 @@ body {
 	position:relative;
     width: 80%; margin-left: 10%;
     height:45%; min-height: 1em;
-    -moz-border-radius: 5% / 50%;
-    -webkit-border-radius: 5% / 50%;
-	border-radius: 5% / 50%;
+    -moz-border-radius: 3% / 25%;
+    -webkit-border-radius: 3% / 25%;
+	border-radius: 3% / 25%;
     background: #fff;
 }
 
 textarea {
 	@extend .splashtextfont;
 	@extend .textarea-shape;
-	width: 90%; float:right;
-	margin-top:2%; padding-bottom:2%;
+	width: 95%; float:right;
+	margin-top:2.5%; padding-bottom:2.5%;
 	border:none; border-style:none;
 	
 	resize:none;
@@ -39,8 +39,8 @@ textarea {
 //Extensions
 		
 		#tabrow{		
-			@extend .navlinkfont;
-			.nav {font-size:120%;}
+			@extend .navishlinkfont;
+			.navish {font-size:120%;}
 		}
 
 		.tile {
@@ -58,7 +58,7 @@ textarea {
 
 
 		#headerstuffchunk {
-			@extend .navlinkfont;
+			@extend .navishlinkfont;
 			.chunkpiece {
 				font-size: 120%;
 			}
@@ -75,7 +75,7 @@ textarea {
 		float:left;
 
 		img {
-			@include scalenpad(78%, 4%, 8%);
+			@include scalenpad(65%, 4%, 11%);
 		}
 
 	}
@@ -143,7 +143,7 @@ textarea {
 
 }
 
-#masthead {
+#container {
 	position: relative;
 	height:$mastheadheight;
 	overflow:hidden;
@@ -157,14 +157,15 @@ textarea {
 	position: relative;
 	background: $htmlbackground;
 
+	#tabrow, #tilewrapper { 
+		@include flexiwrap(100%, 1080px, 444px); }
+
 	#tabrow {
 		position: relative;
-		width: $bodywidth;
+		padding-top: 3.5%;
 		margin: $mcentered;
-		padding: 5% 0 0;
 
-
-		.nav {
+		.navish {
 			
 			position:relative;
 			margin: 0 4px 0 0; padding: 1px 8px;
@@ -192,10 +193,9 @@ textarea {
 
 	#tilewrapper{
 		position:relative;	
-		width: $bodywidth;
 		background: #fff;
-		margin: 0 auto 25px; padding: 0 3%;
 		letter-spacing: -5px;
+		margin: 0 auto 25px;
 
 		.tile{
 			box-sizing:border-box;
