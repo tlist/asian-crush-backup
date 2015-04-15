@@ -34,11 +34,11 @@ $arrConfig	=	array(
 PfBase::initTheme($arrConfig);
 add_action( 'init', 'amr_setup' );
 
-  define (METABOXHIDDEN_MOVIE, 'a:1:{i:0;s:7:"slugdiv";}');
-  define (META_BOX_ORDER_MOVIE , 'a:3:{s:4:"side";s:141:"submitdiv,movie_genrediv,movie_regiondiv,tagsdiv-movie_director,tagsdiv-movie_actor_actress,movie_duration,postimagediv";s:6:"normal";s:91:"movie_year,movie_plot,movie_quotes,movie_amazon_link,movie_embedded_video,slugdiv,authordiv";s:8:"advanced";s:0:"";}');
-  define (SCREEN_LAYOUT_DASHBOARD, 's:1:"1";');
-  define (META_BOX_ORDER_DASHBOARD, 'a:4:{s:6:"normal";s:188:"dashboard_right_now,dashboard_recent_comments,dashboard_incoming_links,dashboard_plugins,yoast_db_widget,dashboard_quick_press,dashboard_recent_drafts,dashboard_primary,dashboard_secondary";s:4:"side";s:0:"";s:7:"column3";s:0:"";s:7:"column4";s:0:"";}');
-  define (METABOXHIDDEN_DASHBOARD, 'a:8:{i:0;s:25:"dashboard_recent_comments";i:1;s:24:"dashboard_incoming_links";i:2;s:17:"dashboard_plugins";i:3;s:15:"yoast_db_widget";i:4;s:21:"dashboard_quick_press";i:5;s:23:"dashboard_recent_drafts";i:6;s:17:"dashboard_primary";i:7;s:19:"dashboard_secondary";}');
+  define ('METABOXHIDDEN_MOVIE', 'a:1:{i:0;s:7:"slugdiv";}');
+  define ('META_BOX_ORDER_MOVIE' , 'a:3:{s:4:"side";s:141:"submitdiv,movie_genrediv,movie_regiondiv,tagsdiv-movie_director,tagsdiv-movie_actor_actress,movie_duration,postimagediv";s:6:"normal";s:91:"movie_year,movie_plot,movie_quotes,movie_amazon_link,movie_embedded_video,slugdiv,authordiv";s:8:"advanced";s:0:"";}');
+  define ('SCREEN_LAYOUT_DASHBOARD', 's:1:"1";');
+  define ('META_BOX_ORDER_DASHBOARD', 'a:4:{s:6:"normal";s:188:"dashboard_right_now,dashboard_recent_comments,dashboard_incoming_links,dashboard_plugins,yoast_db_widget,dashboard_quick_press,dashboard_recent_drafts,dashboard_primary,dashboard_secondary";s:4:"side";s:0:"";s:7:"column3";s:0:"";s:7:"column4";s:0:"";}');
+  define ('METABOXHIDDEN_DASHBOARD', 'a:8:{i:0;s:25:"dashboard_recent_comments";i:1;s:24:"dashboard_incoming_links";i:2;s:17:"dashboard_plugins";i:3;s:15:"yoast_db_widget";i:4;s:21:"dashboard_quick_press";i:5;s:23:"dashboard_recent_drafts";i:6;s:17:"dashboard_primary";i:7;s:19:"dashboard_secondary";}');
   
 //echo serialize(get_user_meta(1, 'metaboxhidden_dashboard', true));  
 //die();  
