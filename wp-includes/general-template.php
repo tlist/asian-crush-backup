@@ -84,6 +84,15 @@ function get_footer( $name = null ) {
 	// Backward compat code will be removed in a future release
 	if ('' == locate_template($templates, true))
 		load_template( ABSPATH . WPINC . '/theme-compat/footer.php');
+        
+        echo "ABSPATH:". ABSPATH;
+        echo "WPINC:" . WPINC;
+        
+        foreach($templates as $template)
+           echo "template:".$template;
+  
+    echo "loaded template: " . ABSPATH.WPINC.'/theme-compat/footer.php';
+
 }
 
 /**

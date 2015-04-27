@@ -19,6 +19,7 @@ $movie_genre = isset($_GET['movie_genre']) ? $_GET['movie_genre'] : _CATE_ID_MOV
         
                 
 	    <?php echo PfBase::getBlock('blocks'.DS.'list_movies_by_cate.php', array('cate_id' => $movie_genre, 'movie_region'=>$movie_region, 'movie_begin_with' => $movie_begin_with,  'showFilter' => 1, 'pagination' => 1, 'page' => $page, 'itemsPerPage' => $itemsPerPage, 'numItemsPerRow' => _NUM_ITEM_PER_ROW_MOVIE_GENRE, 'cacheLifetime' => 60*30)) ?>	    
-	  
+	       
+		     
 
 <?php get_footer() ?>

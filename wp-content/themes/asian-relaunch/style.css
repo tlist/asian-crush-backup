@@ -162,6 +162,33 @@ form.search {
 	font-size: 11px;
 }
 
+#footer-bar {
+	position: relative;
+	height:30%;
+	background: #333;
+	@extend .navishlinkfont;
+	
+	
+	#copyrightwrapper {
+		float: right;
+		width:33%;
+
+		img {		
+	        float: right;	
+			display:block;
+			width:60%;
+			margin:3% auto 0;
+		}
+		
+		#copyrightspan {
+			font-size: 86%;
+			text-align:center;
+		}
+	}
+}
+
+
+
 	
 	
 ::-webkit-input-placeholder { color: #fff;}
