@@ -1,6 +1,6 @@
 <?php get_header() ?>
 
-	<?php echo PfBase::getBlock('blocks'.DS.'form_search_operator.php') ?>	
+	
 	
 	<div class="main_content">
 		<h1><?php echo get_the_title(); ?></h1>

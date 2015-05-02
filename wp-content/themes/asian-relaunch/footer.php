@@ -11,7 +11,7 @@
 <div id="footer-bar">
  <div id="copyrightwrapper">
   <img src="<?php echo PfBase::app()->themeUrl; ?>/_img/logo_small.png" alt="<?php bloginfo('name'); ?>" />
- <div class="copyrightspan">
+ <div id="copyrightspan">
     <?php
           $numStartYear	=	2011;
           $strYear	=	date('Y') > $numStartYear ? $numStartYear.' - '.date('Y') : $numStartYear;
