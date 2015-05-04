@@ -1,0 +1,33 @@
+@import '../global/ac-lib';
+
+
+.mastframe {
+	position:relative;
+	overflow:hidden;
+	min-width: 100%; min-height:$mastheadheight;
+	height:inherit;
+	img {
+		position: absolute;
+		min-width: 100%;
+	}
+
+}
+
+.framemeta {
+	position:relative;
+	box-style:border-box;
+	margin-top:6%;
+	padding: 18px 0 35px 15px;
+	width:30%;
+	float:right;
+	color:white;
+    background: rgb(137, 137, 145); /* Fall-back for browsers that don't support rgba */
+    background: rgba(0,0,0, .5);
+	z-index:2;
+
+	$maxspanwidth: 60%;
+	.genre { background:black; font-size: 1.25em; font-weight:600; padding: 4px; }
+	.synopsis { display:inline-block; font-size: .75em; max-width:$maxspanwidth;}
+	.title { display:inline-block; max-width:10%; font-size:1.3em; line-height: 1em; }
+	
+}

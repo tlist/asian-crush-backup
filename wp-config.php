@@ -14,10 +14,10 @@ if (isset($_SERVER["HTTP_X_FORWARDED_PROTO"]) && $_SERVER["HTTP_X_FORWARDED_PROT
  *
  * @package WordPress
  */
-
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define('DB_NAME', 'c9');
+<<<<<<< HEAD
 
 /** MySQL database username */
 define('DB_USER', getenv('C9_USER'));
@@ -28,12 +28,18 @@ define('DB_PASSWORD', '');
 /** MySQL hostname */
 define('DB_HOST', getenv('IP'));
 
+=======
+/** MySQL database username */
+define('DB_USER', getenv('C9_USER'));
+/** MySQL database password */
+define('DB_PASSWORD', '');
+/** MySQL hostname */
+define('DB_HOST', getenv('IP'));
+>>>>>>> 44ae9b0fc5e1120f3550b0c89aebf6d54de18ea7
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');
-
 /** The Database Collate type. Don't change this if in doubt. */
 define('DB_COLLATE', '');
-
 /**#@+
  * Authentication Unique Keys and Salts.
  *
@@ -51,9 +57,11 @@ define('AUTH_SALT',        'put your unique phrase here');
 define('SECURE_AUTH_SALT', 'put your unique phrase here');
 define('LOGGED_IN_SALT',   'put your unique phrase here');
 define('NONCE_SALT',       'put your unique phrase here');
+<<<<<<< HEAD
 
+=======
+>>>>>>> 44ae9b0fc5e1120f3550b0c89aebf6d54de18ea7
 /**#@-*/
-
 /**
  * WordPress Database Table prefix.
  *
@@ -61,7 +69,10 @@ define('NONCE_SALT',       'put your unique phrase here');
  * prefix. Only numbers, letters, and underscores please!
  */
 $table_prefix  = 'amr_';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 44ae9b0fc5e1120f3550b0c89aebf6d54de18ea7
 /**
  * For developers: WordPress debugging mode.
  *
@@ -72,12 +83,13 @@ $table_prefix  = 'amr_';
 define('WP_DEBUG', false);
 $_SERVER["HTTP_HOST"] = $_SERVER["SERVER_NAME"];
 $_SERVER["HTTP_HOST"] = $_SERVER["SERVER_NAME"];
+<<<<<<< HEAD
 
+=======
+>>>>>>> 44ae9b0fc5e1120f3550b0c89aebf6d54de18ea7
 /* That's all, stop editing! Happy blogging. */
-
 /** Absolute path to the WordPress directory. */
 if ( !defined('ABSPATH') )
 	define('ABSPATH', dirname(__FILE__) . '/');
-
 /** Sets up WordPress vars and included files. */
 require_once(ABSPATH . 'wp-settings.php');

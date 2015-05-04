@@ -223,8 +223,7 @@ else{
 ?>
 <?php get_header() ?>
 	
-    <?php echo PfBase::getBlock('blocks'.DS.'form_search_operator.php') ?>
-	<div class="main_content cls-search-page">	
+   <div class="main_content cls-search-page">	
 		
 		<div class="movie_search movie_search_result white_bg">
             <p><?php echo count($rows_obj);  ?> results for "<?php echo $key; ?>"</p>

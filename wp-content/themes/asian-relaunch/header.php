@@ -112,15 +112,27 @@
 				<div id="body_container">
 					<div id="header">
 
-						<a href="<?php echo site_url() ?>" id="logo" title="<?php bloginfo('name'); ?>">
-<img src="<?php echo PfBase::app()->themeUrl; ?>/_img/logo.png" alt="<?php bloginfo('name'); ?>" />
-</a>
+						
 					    
 					   <div class="adv"><?php dynamic_sidebar('ad-header'); ?></div><br clear="all">
 					    
+						<a href="<?php echo site_url() ?>" id="logo" title="<?php bloginfo('name'); ?>">
+<img src="<?php echo PfBase::app()->themeUrl; ?>/_img/logo.png" alt="<?php bloginfo('name'); ?>" />
+</a>
 					<div class="navigation-box">
-					<?php wp_nav_menu(array( 'menu' => 'g-navi' ) ); ?>    
+					<?php wp_nav_menu(array( 'menu' => 'g-navi' ) ); ?>
+					
+					
 					    <?php echo PfBase::getBlock('blocks'.DS.'form_search_main.php') ?>
+				
+				    
+					  
+				
 					</div> <!-- end .navigation-box -->
+					 <div class="social">
+        	        <a href="http://www.twitter.com/asiancrush" target="_blank"><img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ic_twitter.png" alt="Twitter | <?php bloginfo('name'); ?>" class="jquery-hover" /></a>
+		            <a href="http://www.facebook.com/asiancrushfilms" target="_blank"><img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ic_facebook.png" alt="Facebook | <?php bloginfo('name'); ?>"  class="jquery-hover" /></a>
+        	        <a href="http://www.youtube.com/AsianMedia2010" target="_blank"><img src="<?php echo PfBase::app()->themeUrl; ?>/_img/ic_youtube.png" alt="You Tube | <?php bloginfo('name'); ?>"  class="jquery-hover" /></a>
+                    </div> <!-- end social media -->
 					</div> <!-- end header -->
                     <div id="container" <?php body_class(); ?>>			

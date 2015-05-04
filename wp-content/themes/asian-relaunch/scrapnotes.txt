@@ -1,0 +1,103 @@
+Variables Needs
+
+General
+	$maxwidth:1200px;
+	$minwidth:400px;
+	$width:100%;
+	
+	$htmlbackground: #f3f3f3;
+	$contentbackground: white;
+
+Text
+	$fontfamily: Verdana, Geneva, sans-serif;
+	$basefontsize: 12px;
+	$baselineheight: 18px;
+	
+	$basehlsize
+
+TabNavs
+	$tilenavbar-h:;
+	$tilenavbar-w:;
+Image
+
+Tile
+	$tilehead-h:;
+	$tileimg-h:;
+	$tilebody-h:;
+	$tilefooter-h:;
+
+footertext
+Navigate
+	MOVIES
+	SPORTS
+	FIND ASIAN CRUSH
+	ABOUT
+	JOBS
+
+Asian Crush
+	PRIVACY POLICY
+	TERMS AND CONDITIONS
+	JOBS
+
+How To
+	JOIN OUR MAILING LIST
+	SUBMIT YOUR FILM or PROGRAM
+	ADVERTISE WITH US
+	CONTACT US
+
+
+Faced with her parents pending divorce and her inability to fit in at school, precocious 13-year-old Mei runs away from home with Jay, her ostracized new classmate, in this coming-of-age tale full of fantastical and dazzling imagery.
+
+
+Genre
+	THRILLER	
+Synopsis
+	Sex, lies and betrayal unhinge the marriage between a successful career woman and her recently unemployed husband. Choi Min-sik (star of Oldboy & Lucy) plays the jealous husband whose wife carries a passionate love affair with her ex-lover.
+Title
+	Happy End
+
+
+<div class="item">
+	<div class="mastframe" style="min-height:450px;">
+
+		<img src="assets/images/starry-starry-night_masthead.png" />
+		<div class="framemeta framemetafont">
+			<span class="genre">HORROR</span><br />
+			<br /><br />
+			<span class="synopsis">The Asian horror anthology tradition continues! Tales offers three spine tingling stories based on supernatural Chinese folklore by author Lilian Lee.</span><br/>
+			<br /><br /><br />
+			<span class="title">Tales from the Dark</span>
+		</div>
+
+	</div>
+</div>
+
+<div class="item">
+	<div class="mastframe" style="min-height:450px;">
+
+		<img src="assets/images/starry-starry-night_masthead.png" />
+		<div class="framemeta framemetafont">
+			<span class="genre">THRILLER</span><br />
+			<br /><br />
+			<span class="synopsis">Sex, lies and betrayal unhinge the marriage between a successful career woman and her recently unemployed husband. Choi Min-sik (star of Oldboy & Lucy) plays the jealous husband whose wife carries a passionate love affair with her ex-lover.</span><br/>
+			<br /><br /><br />
+			<span class="title">Happy End</span>
+		</div>
+
+	</div>
+</div>
+
+<div class="item">
+	<div class="mastframe" style="min-height:450px;">
+
+		<img src="assets/images/starry-starry-night_masthead.png" />
+		<div class="framemeta framemetafont">
+			<span class="genre">ACTION / COMEDY</span><br />
+			<br /><br />
+			<span class="synopsis">In this irreverent martial arts farce, our bumbling hero goes from lowly cobbler to Kung Fu master after saving a beautiful princess in disguise. Together they will battle the evil Emperor for peace and justice.</span><br/>
+			<br /><br /><br />
+			<span class="title">Kung Fu Shuffle</span>
+		</div>
+
+	</div>
+</div>

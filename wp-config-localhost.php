@@ -27,7 +27,11 @@ define('DB_NAME', 'amr_old');
 define('DB_USER', 'root');
 
 /** MySQL database password */
+<<<<<<< HEAD
 define('DB_PASSWORD', 'apartment#9');
+=======
+define('DB_PASSWORD', '');
+>>>>>>> 44ae9b0fc5e1120f3550b0c89aebf6d54de18ea7
 
 /** MySQL hostname */
 define('DB_HOST', 'localhost');
